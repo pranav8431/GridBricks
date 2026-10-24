@@ -128,7 +128,6 @@ def build_meta(data: DeskData, settings: Settings) -> MetaResponse:
         calibration=CalibrationSettings(
             method=METHOD,
             window_days=calibration.window_days,
-            gap_days=calibration.gap_days,
             min_samples=calibration.min_samples,
             quantiles=list(QUANTILES),
         ),

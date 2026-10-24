@@ -1,6 +1,6 @@
 # ADR-0003: Quantify forecast error with walk-forward ratio quantiles
 
-**Status:** accepted
+**Status:** superseded by [ADR-0006](0006-linear-walk-forward-correction.md)
 
 ## Context
 

@@ -68,17 +68,33 @@ For every hourly product t of delivery day D, with decision time c on D-1:
 
 ## 5. The error-adjusted estimate and likely range
 
-For each delivery day D:
+For each decision, with cutoff c:
 
-1. Take the decision-time forecasts and actuals of the 14 delivery days **D−15 to D−2**. D−2 is
-   the newest day fully settled before a morning gate on D-1.
-2. For every hour with a forecast of at least 250 MW, compute r = actual ÷ forecast.
-3. The P10, P50 and P90 of r, multiplied by D's forecast, give the likely range and the
-   error-adjusted central estimate (P50).
+1. Take every hour of the 14 days before c whose **outturn had been published before c**, with
+   the decision-time forecast that was used for it. This includes the early hours of the
+   previous delivery day that settled before a morning gate.
+2. Leave out hours with a forecast below 250 MW, then fit a least-squares line,
+   actual ≈ a + b × forecast.
+3. The line applied to D's forecast gives the corrected central estimate (P50). The 10th and 90th
+   percentiles of the residuals around the line give the likely range (P10 to P90).
 
-**Why multiplicative.** GB wind errors grow with output, as the table below shows. An additive
-band, a fixed number of MW, was also backtested. It gave a central-estimate MAE of 1.55 GW,
-against 1.41 GW for the ratio method, so the ratio method was kept.
+In January the slope b was about 0.7: the higher the forecast, the larger the over-forecast. A
+line captures that directly.
+
+**Why this method.** Each alternative was backtested on the same January decisions:
+
+| Method | Daily energy error | Hourly MAE | Range coverage | Range width |
+|---|---|---|---|---|
+| Published forecast, uncorrected | 43.3 GWh | 2.02 GW | — | — |
+| Ratio quantiles, settled days D−15 to D−2 | 28.2 GWh | 1.41 GW | 82.5% | 5.4 GW |
+| Ratio quantiles, last 48 settled hours | 37.5 GWh | 1.76 GW | 61.2% | 4.2 GW |
+| Ratio quantiles, 150 nearest forecast levels | 22.5 GWh | 1.28 GW | 80.0% | 4.2 GW |
+| **Linear correction, last 14 days (chosen)** | **22.4 GWh** | **1.24 GW** | **80.1%** | **3.7 GW** |
+| Linear correction, last 28 days | 21.5 GWh | 1.21 GW | 77.8% | 3.7 GW |
+
+The 28-day line is marginally more accurate, but its range covers less than 80% of hours, so the
+14-day line was kept. Daily energy error here is the mean absolute difference between forecast and
+actual energy per delivery day.
 
 **Warm-up.** Early-January decisions need history from late December 2025. That history is used
 only for calibration, because a trader would already have known it, and never shown as results.
@@ -95,10 +111,12 @@ wide.
 
 | Measure | Published forecast | Error-adjusted (P50) |
 |---|---|---|
-| Mean absolute error | 2.02 GW | 1.41 GW (−30%) |
+| Daily energy error | 43.3 GWh | 22.4 GWh (−48%) |
+| Mean absolute error | 2.02 GW | 1.24 GW (−39%) |
 | RMSE | 2.49 GW | — |
-| Bias | +1.75 GW | +0.62 GW |
-| Actual hours inside P10–P90 | — | 82.5% (target 80%), average width 5.4 GW |
+| Bias | +1.75 GW | +0.18 GW |
+| Actual hours inside P10–P90 | — | 80.1% (target 80%), average width 3.7 GW |
+| Net January energy error | +1,301 GWh | +136 GWh |
 
 **Bias grows with wind level.**
 
@@ -118,12 +136,12 @@ data, which is out of this pilot's scope.
 
 | Decision time | Run used | MAE | MAE after adjustment |
 |---|---|---|---|
-| 09:20 EPEX hourly | 07:30 | 2.02 GW | 1.41 GW |
-| 09:50 N2EX | 09:30 | 1.99 GW | 1.40 GW |
-| 15:30 EPEX half-hourly | 11:30 | 1.88 GW | 1.31 GW |
+| 09:20 EPEX hourly | 07:30 | 2.02 GW | 1.24 GW |
+| 09:50 N2EX | 09:30 | 1.99 GW | 1.22 GW |
+| 15:30 EPEX half-hourly | 11:30 | 1.88 GW | 1.11 GW |
 
 Moving from the 09:20 auction to the 15:30 auction cuts error by 7%. Correcting the forecast cuts
-it by 30%.
+it by 39%.
 
 **Accuracy by lead time** across all runs ranges from an MAE of 1.67 GW at 0–3 hours ahead to
 2.37 GW at 69–72 hours. Even same-day forecasts carry most of the bias, which again points to a
@@ -131,22 +149,22 @@ structural cause rather than weather uncertainty.
 
 **Largest misses** in forecast energy minus actual energy:
 
-| Delivery day | Error |
-|---|---|
-| 28 January | +128 GWh |
-| 12 January | +121 GWh |
-| 11 January | +112 GWh |
-| 21 January | +88 GWh |
-| 27 January | +80 GWh |
+| Delivery day | Published forecast error | After correction |
+|---|---|---|
+| 28 January | +128 GWh | +103 GWh |
+| 12 January | +121 GWh | +45 GWh |
+| 11 January | +112 GWh | +51 GWh |
+| 21 January | +88 GWh | +3 GWh |
+| 27 January | +80 GWh | +17 GWh |
 
-On 28 January the error-adjusted range missed every hour, a reminder that the range reflects
-recent conditions, not storms.
+On 28 January the corrected range still missed every hour, a reminder that the correction reflects
+recent conditions, not sudden changes.
 
 ## 7. Limitations
 
 - National level only, not the client's own portfolio or demand.
 - Volumes only: no prices, so no cost of being short or long yet.
-- The calibration assumes the last two weeks' behaviour persists into tomorrow, so regime changes
+- The correction assumes the last two weeks' behaviour persists into tomorrow, so regime changes
   can break it. Coverage is monitored for this reason.
 - Market timings are presets taken from EPEX SPOT and Nord Pool publications. Each client should
   confirm the auction it uses.

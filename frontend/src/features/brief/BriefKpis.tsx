@@ -9,7 +9,7 @@ import {
 
 import type { BriefResponse } from '../../api/client';
 import { StatTile } from '../../components/StatTile';
-import { duration, gw, gwh, signedGwh, ukTime } from '../../lib/format';
+import { duration, gw, gwh, signedGwh, ukDateTime, ukTime } from '../../lib/format';
 import { revisionNote } from '../../lib/headline';
 
 export function BriefKpis({ brief, reveal }: { brief: BriefResponse; reveal: boolean }) {
@@ -36,7 +36,7 @@ export function BriefKpis({ brief, reveal }: { brief: BriefResponse; reveal: boo
         }
         hint={
           calibration.sufficient
-            ? `P50 and P10–P90 learned from ${calibration.samples} decision-time forecasts settled before the decision (${calibration.window_start ?? ''} to ${calibration.window_end ?? ''}). Nothing published after the decision is used.`
+            ? `Corrected with a line fitted to ${calibration.samples} hours whose outturn was known at the decision (${calibration.window_start ? ukDateTime(calibration.window_start) : ''} to ${calibration.window_end ? ukDateTime(calibration.window_end) : ''}): actual ≈ ${Math.round(calibration.intercept_mw ?? 0).toLocaleString('en-GB')} MW + ${(calibration.slope ?? 0).toFixed(2)} × forecast.`
             : 'Needs enough settled history before the decision.'
         }
       />

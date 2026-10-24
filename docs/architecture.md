@@ -61,7 +61,8 @@ Every analytical view is a projection of one table, built per decision time by
 | `previous_publish_time`, `previous_forecast_mw` | The run before it, used to show revisions |
 | `horizon_h` | Lead time from publication to the hour |
 | `actual_mw`, `error_mw` | FUELHH outturn for the half-hour starting at `start_time`; error = forecast − actual |
-| `p10_mw`, `p50_mw`, `p90_mw` | Walk-forward calibrated range. See [ADR-0003](adr/0003-walk-forward-ratio-calibration.md). |
+| `actual_published` | When that outturn was published: decides whether it was known at a later cutoff |
+| `p10_mw`, `p50_mw`, `p90_mw` | Walk-forward linear correction and range. See [ADR-0006](adr/0006-linear-walk-forward-correction.md). |
 
 The table covers the 14-day calibration warm-up plus every in-scope delivery day. The warm-up days
 are never shown; they only calibrate early-January ranges.
