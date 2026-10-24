@@ -223,8 +223,8 @@ See `.env.example`.
   - 12-factor configuration and pinned lockfiles.
   - Dependabot.
 - **Accessibility.** axe audits every page in both themes in CI. The chart palette is validated
-  for colour-blind separation in light and dark mode. Every chart has a table view. Controls are keyboard-reachable, and every view is
-  shareable through its URL.
+  for colour-blind separation in light and dark mode. Every chart has a table view. Controls are
+  keyboard-reachable, and every view is shareable through its URL.
 
 ## Use of AI tools
 
@@ -237,8 +237,7 @@ assistant. It was used for:
 - tests and documentation.
 
 The author directed the work and reviewed and verified the output, including every number quoted
-above, which the golden tests pin. Commits written with AI assistance carry a `Co-Authored-By`
-trailer.
+above, which the golden tests pin.
 
 ## Limitations
 
