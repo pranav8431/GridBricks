@@ -1,0 +1,37 @@
+# --- Private material: never published -------------------------------------
+# Video script, slide deck and screenshots for the submission video.
+presentation/
+
+# --- Python ------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# --- Node / frontend ---------------------------------------------------------
+node_modules/
+frontend/dist/
+frontend/coverage/
+frontend/test-results/
+frontend/playwright-report/
+frontend/blob-report/
+*.tsbuildinfo
+
+# --- Environment & tooling ---------------------------------------------------
+.env
+.env.*
+!.env.example
+.vercel/
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.log
