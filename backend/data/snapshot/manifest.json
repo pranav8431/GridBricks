@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-10-24T09:24:51+00:00",
+  "source": "Elexon BMRS Insights API (https://data.elexon.co.uk/bmrs/api/v1)",
+  "datasets": {
+    "FUELHH": {
+      "dataset": "FUELHH",
+      "endpoint": "/datasets/FUELHH/stream",
+      "params": {
+        "settlementDateFrom": "2025-12-17",
+        "settlementDateTo": "2026-02-01",
+        "fuelType": "WIND"
+      },
+      "file": "fuelhh_wind.json.gz",
+      "rows": 2256,
+      "sha256": "6fd32c76bb7162500382d3342b6243c7ecc7437ea49d75de473abb4787e62b65"
+    },
+    "WINDFOR": {
+      "dataset": "WINDFOR",
+      "endpoint": "/datasets/WINDFOR/stream",
+      "params": {
+        "publishDateTimeFrom": "2025-12-15T00:00:00+00:00",
+        "publishDateTimeTo": "2026-02-01T23:00:00+00:00"
+      },
+      "file": "windfor.json.gz",
+      "rows": 28616,
+      "sha256": "ed7d8e0314484782b21c552641f6fc5f9f7438fb7675f28812be053acac0c7c9"
+    }
+  }
+}
