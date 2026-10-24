@@ -54,16 +54,9 @@ export function StatTile({
           ) : null}
         </Group>
       </Group>
-      <Text
-        fz={28}
-        fw={700}
-        lh={1.15}
-        mt={10}
-        c="var(--gb-ink)"
-        style={{ letterSpacing: '-0.01em' }}
-      >
+      <div className="gb-stat-value" style={{ marginTop: 12 }}>
         {value}
-      </Text>
+      </div>
       {detail ? (
         <Text size="sm" mt={4} c={toneColor[tone]}>
           {detail}

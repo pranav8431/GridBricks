@@ -1,0 +1,31 @@
+{
+  "checked_from": "2025-12-17T23:00:00Z",
+  "checked_to": "2026-02-01T23:00:00Z",
+  "actual_periods_expected": 2208,
+  "actual_periods_present": 2208,
+  "missing_actual_periods": [],
+  "forecast_runs": 392,
+  "forecast_points": 22735,
+  "stale_points_removed": 5881,
+  "run_schedule_utc": ["02:30", "04:30", "07:30", "09:30", "11:30", "15:30", "18:30", "22:30"],
+  "off_schedule_runs": ["2026-01-15T12:25:00Z"],
+  "missing_scheduled_runs": ["2026-01-15T11:30:00Z"],
+  "issues": [
+    {
+      "severity": "info",
+      "message": "All 2,208 half-hourly actuals are present."
+    },
+    {
+      "severity": "warning",
+      "message": "Off-schedule forecast run published 12:25 on 15 Jan 2026 (UK). Selection uses actual publish times, so it is handled correctly."
+    },
+    {
+      "severity": "warning",
+      "message": "No forecast run at the usual 11:30 slot on 15 Jan 2026 (UK); decisions fall back to the latest earlier run."
+    },
+    {
+      "severity": "info",
+      "message": "5,881 stale forecast points removed: values for hours that had already started when the run was published."
+    }
+  ]
+}

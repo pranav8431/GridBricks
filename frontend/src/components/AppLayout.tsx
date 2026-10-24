@@ -1,8 +1,9 @@
 import {
   ActionIcon,
   Anchor,
+  AppShell,
   Box,
-  Container,
+  Burger,
   Group,
   Stack,
   Text,
@@ -10,41 +11,72 @@ import {
   useComputedColorScheme,
   useMantineColorScheme,
 } from '@mantine/core';
-import { IconMoon, IconSun } from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
+import {
+  IconBook2,
+  IconChartHistogram,
+  IconMoon,
+  IconSun,
+  IconWindmill,
+} from '@tabler/icons-react';
+import type { ReactNode } from 'react';
 import { NavLink, Outlet } from 'react-router';
 
 import { useMeta } from '../api/queries';
 import { gateQueryString, useGateSelection } from '../lib/params';
 import { GateSelector } from './GateSelector';
 
-const NAV = [
-  { to: '/brief', label: 'Day-ahead brief' },
-  { to: '/accuracy', label: 'Forecast accuracy' },
-  { to: '/methodology', label: 'Methodology & data' },
+const NAV: { to: string; label: string; icon: ReactNode }[] = [
+  { to: '/brief', label: 'Day-ahead brief', icon: <IconWindmill size={18} stroke={1.6} /> },
+  {
+    to: '/accuracy',
+    label: 'Forecast accuracy',
+    icon: <IconChartHistogram size={18} stroke={1.6} />,
+  },
+  { to: '/methodology', label: 'Methodology & data', icon: <IconBook2 size={18} stroke={1.6} /> },
 ];
 
-function BrandMark() {
+/** Turbine mark: three blades around a hub, on the signal accent. */
+export function TurbineMark({ size = 34 }: { size?: number }) {
   return (
-    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden>
-      <rect width="32" height="32" rx="8" fill="#2a78d6" />
-      <g fill="#ffffff">
-        <rect x="6" y="18" width="5" height="8" rx="1.5" />
-        <rect x="13.5" y="12" width="5" height="14" rx="1.5" />
-        <rect x="21" y="6" width="5" height="20" rx="1.5" />
+    <svg width={size} height={size} viewBox="0 0 40 40" aria-hidden>
+      <rect width="40" height="40" rx="10" fill="#ffc531" />
+      <g fill="#0b131d" transform="translate(20 17)">
+        <path d="M0 -1.5 C1.6 -6 1.2 -11 0 -13 C-1.2 -11 -1.6 -6 0 -1.5Z" />
+        <path d="M0 -1.5 C1.6 -6 1.2 -11 0 -13 C-1.2 -11 -1.6 -6 0 -1.5Z" transform="rotate(120)" />
+        <path d="M0 -1.5 C1.6 -6 1.2 -11 0 -13 C-1.2 -11 -1.6 -6 0 -1.5Z" transform="rotate(240)" />
+        <circle r="2.2" />
       </g>
+      <rect x="19" y="19" width="2" height="15" rx="1" fill="#0b131d" />
     </svg>
+  );
+}
+
+function Brand() {
+  return (
+    <Group gap="sm" wrap="nowrap">
+      <TurbineMark />
+      <Box>
+        <Text fw={600} lh={1.1} c="#ffffff" className="gb-display" fz={17}>
+          GridBricks
+        </Text>
+        <Text fz={11} lh={1.3} c="#8193a8" className="gb-mono">
+          DAY-AHEAD WIND DESK
+        </Text>
+      </Box>
+    </Group>
   );
 }
 
 function ColorSchemeToggle() {
   const { setColorScheme } = useMantineColorScheme();
-  const scheme = useComputedColorScheme('light');
+  const scheme = useComputedColorScheme('dark');
   const next = scheme === 'dark' ? 'light' : 'dark';
   return (
     <Tooltip label={`Switch to ${next} mode`}>
       <ActionIcon
         variant="subtle"
-        color="gray.0"
+        color="gray.4"
         size="lg"
         aria-label={`Switch to ${next} mode`}
         onClick={() => setColorScheme(next)}
@@ -59,73 +91,104 @@ export function AppLayout() {
   const [selection] = useGateSelection();
   const meta = useMeta();
   const query = gateQueryString(selection);
+  const [opened, { toggle, close }] = useDisclosure(false);
 
   return (
-    <Box mih="100vh" style={{ display: 'flex', flexDirection: 'column' }}>
+    <AppShell
+      header={{ height: { base: 60, sm: 0 } }}
+      navbar={{ width: 264, breakpoint: 'sm', collapsed: { mobile: !opened } }}
+      padding={0}
+    >
       <a href="#main" className="gb-visually-hidden">
         Skip to content
       </a>
-      <header className="gb-header">
-        <Container size="xl" py={12}>
-          <Group justify="space-between" wrap="wrap" gap="md">
-            <Group gap="xl" wrap="wrap">
-              <Group gap="sm" wrap="nowrap">
-                <BrandMark />
-                <Box>
-                  <Text fw={700} lh={1.1} c="#ffffff">
-                    GridBricks
-                  </Text>
-                  <Text size="xs" lh={1.2} className="gb-header-sub">
-                    Day-Ahead Wind Desk
-                  </Text>
-                </Box>
-              </Group>
+      <AppShell.Header hiddenFrom="sm" className="gb-rail" withBorder={false}>
+        <Group h="100%" px="md" justify="space-between">
+          <Brand />
+          <Burger opened={opened} onClick={toggle} color="#e8eef5" size="sm" aria-label="Menu" />
+        </Group>
+      </AppShell.Header>
+
+      <AppShell.Navbar className="gb-rail" p="md">
+        <Stack justify="space-between" h="100%" gap="lg">
+          <Stack gap="xl">
+            <Box visibleFrom="sm" pt={4}>
+              <Brand />
+            </Box>
+            <Stack gap={6}>
+              <Text className="gb-rail-label">Desk</Text>
               <nav aria-label="Main">
-                <Group gap={4} wrap="nowrap" style={{ overflowX: 'auto' }}>
+                <Stack gap={2}>
                   {NAV.map((item) => (
-                    <NavLink key={item.to} to={`${item.to}${query}`} className="gb-nav-link">
+                    <NavLink
+                      key={item.to}
+                      to={`${item.to}${query}`}
+                      className="gb-nav-link"
+                      onClick={close}
+                    >
+                      {item.icon}
                       {item.label}
                     </NavLink>
                   ))}
-                </Group>
+                </Stack>
               </nav>
-            </Group>
-            <Group gap="xs" wrap="nowrap">
-              <GateSelector />
-              <ColorSchemeToggle />
-            </Group>
-          </Group>
-        </Container>
-      </header>
+            </Stack>
+            <Stack gap={8}>
+              <Text className="gb-rail-label">Decision time</Text>
+              <Box px={4}>
+                <GateSelector />
+              </Box>
+              <Text fz={12} c="#8193a8" px={12} lh={1.45}>
+                Gate closure on the day before delivery, UK time. Every view uses only forecasts
+                published before it.
+              </Text>
+            </Stack>
+          </Stack>
 
-      <Container size="xl" py="xl" component="main" id="main" style={{ flex: 1, width: '100%' }}>
-        <Outlet />
-      </Container>
-
-      <Box component="footer" py="md" style={{ borderTop: '1px solid var(--gb-border)' }}>
-        <Container size="xl">
-          <Stack gap={2}>
-            <Text size="xs" c="var(--gb-ink-2)">
-              Pilot scope: purchase decisions taken 1–31 January 2026. Data:{' '}
+          <Stack gap="sm">
+            {meta.data ? (
+              <Box className="gb-gate-clock">
+                <Text className="gb-rail-label" p={0}>
+                  Pilot scope
+                </Text>
+                <Text fz={13} c="#e8eef5" mt={6}>
+                  Decisions 1–31 Jan 2026
+                </Text>
+                <Text fz={11} c="#8193a8" className="gb-mono" mt={4}>
+                  snapshot {meta.data.snapshot.version} · v{meta.data.app_version}
+                </Text>
+              </Box>
+            ) : null}
+            <Group justify="space-between" px={4}>
               <Anchor
                 href="https://bmrs.elexon.co.uk/api-documentation"
                 target="_blank"
                 rel="noreferrer"
-                size="xs"
+                fz={12}
+                c="#a9b7c6"
               >
-                Elexon BMRS
-              </Anchor>{' '}
-              WINDFOR forecasts and FUELHH wind outturn, national level.
-            </Text>
-            {meta.data ? (
-              <Text size="xs" c="var(--gb-muted)">
-                Snapshot {meta.data.snapshot.version} · app v{meta.data.app_version} · all times UK
-                (Europe/London)
-              </Text>
-            ) : null}
+                Data: Elexon BMRS
+              </Anchor>
+              <ColorSchemeToggle />
+            </Group>
           </Stack>
-        </Container>
-      </Box>
-    </Box>
+        </Stack>
+      </AppShell.Navbar>
+
+      <AppShell.Main className="gb-main">
+        <Box
+          component="main"
+          id="main"
+          px={{ base: 'md', md: 40 }}
+          py={{ base: 'md', md: 36 }}
+          maw={1440}
+        >
+          <Outlet />
+          <Text fz={12} c="var(--gb-muted)" mt={48} className="gb-mono">
+            WINDFOR forecasts and FUELHH wind outturn, national level · all times UK (Europe/London)
+          </Text>
+        </Box>
+      </AppShell.Main>
+    </AppShell>
   );
 }

@@ -16,7 +16,7 @@ export function BriefKpis({ brief, reveal }: { brief: BriefResponse; reveal: boo
   const { energy, peak, trough, calibration } = brief;
 
   return (
-    <SimpleGrid cols={{ base: 1, xs: 2, md: reveal ? 5 : 4 }} spacing="md">
+    <SimpleGrid cols={{ base: 1, sm: 2, lg: reveal ? 3 : 4 }} spacing="md">
       <StatTile
         label="Published forecast"
         icon={<IconWind size={18} />}

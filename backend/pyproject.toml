@@ -81,6 +81,7 @@ testpaths = ["tests"]
 addopts = "-ra --strict-markers"
 markers = [
     "snapshot: runs against the committed January 2026 data snapshot",
+    "perf: latency budgets (skip with -m \"not perf\")",
 ]
 filterwarnings = ["error::FutureWarning", "error::DeprecationWarning:gridbricks.*"]
 

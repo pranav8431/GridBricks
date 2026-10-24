@@ -35,7 +35,7 @@ export function RunTimeline({ runs, cutoff, decisionRun, gateLabel }: RunTimelin
     <figure style={{ margin: 0 }}>
       <div
         className="gb-timeline"
-        role="img"
+        role="group"
         aria-label={`Forecast runs on the decision day: ${summary}`}
       >
         <div className="gb-timeline-track" />

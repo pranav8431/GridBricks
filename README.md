@@ -11,7 +11,17 @@ around.
 | **Video walkthrough** | `TODO: add the unlisted YouTube link` |
 | **API reference** | `/api/docs` on any running instance (OpenAPI) |
 
-![Day-ahead brief](docs/images/brief.png)
+![Day-ahead brief in the default dark theme](docs/images/brief.png)
+
+| Forecast accuracy | Brief with the outturn revealed |
+|---|---|
+| ![Forecast accuracy page](docs/images/accuracy.png) | ![Day-ahead brief with actual outturn](docs/images/brief-revealed.png) |
+
+The interface is a dark "control room" by default, with a light theme one click away in the
+sidebar. Its identity is deliberate: a left rail with a turbine mark, a single amber signal
+colour for interface state, Space Grotesk display figures, JetBrains Mono for data, a dot-grid
+canvas and a wind-streamline motif. Chart colours are kept separate from that chrome: forecast
+blue, actual orange and corrected aqua, validated for colour-blind readers on both themes.
 
 ## What the desk gets
 
@@ -56,9 +66,9 @@ make dev       # API on :8000 and web on :5173, both with hot reload
 **Checks.**
 
 ```bash
-make check     # lint, strict type checks, 92 backend + 26 frontend tests
+make check     # lint, strict types, 105 backend + 47 frontend tests with coverage gates
 make up        # production container on :8000, then in another shell:
-make e2e       # Playwright browser smoke tests against it
+make e2e       # 14 Playwright tests: smoke, accessibility (axe) and mobile
 ```
 
 **Refresh the data snapshot** from the Elexon API. It is deterministic and checksummed.
@@ -86,7 +96,8 @@ Run `make` on its own to list every target.
 | `frontend/src/features/` | One folder per page: `brief`, `accuracy`, `methodology`. |
 | `frontend/src/api/` | Typed API client; `schema.d.ts` is generated from `openapi.json`. |
 | `frontend/src/lib/` | UK-time formatting, URL state, chart theme and headline text. |
-| `frontend/e2e/` | Playwright smoke tests and the screenshot script. |
+| `frontend/e2e/` | Playwright smoke, accessibility (axe), mobile and screenshot specs. |
+| `docs/testing.md` | The test strategy: every test type, what it proves and how to run it. |
 | `api/index.py` | Vercel serverless entry point that wraps the FastAPI app. |
 | `Dockerfile`, `docker-compose.yml` | Multi-stage production image and local run. |
 | `vercel.json`, `.vercelignore` | Vercel build, routing, function bundle and headers. |
@@ -176,12 +187,22 @@ See `.env.example`.
 
 ## Engineering practices
 
-- **Tests.**
-  - 92 backend tests at 94% coverage. They include a property-based test of forecast selection,
-    a leakage test that scrambles all post-decision data, and golden tests that pin the January
-    headline numbers.
-  - 26 frontend tests that use real API fixtures.
-  - Playwright smoke tests run in a non-UK browser timezone to prove UK-time rendering.
+- **Tests.** 166 automated tests across nine kinds; [docs/testing.md](docs/testing.md) explains
+  each one.
+
+  | Kind | Where | Count |
+  |---|---|---|
+  | Backend unit, incl. property-based selection and the no-look-ahead leakage test | `backend/tests/unit` | 65 |
+  | API integration: contracts, errors, caching, security headers, SPA serving | `tests/integration/test_api.py` | 18 |
+  | API fuzzing with Hypothesis: never a server error, always clean problem+json | `test_api_fuzz.py` | 1 property, 120 cases |
+  | Contract: frontend's OpenAPI copy equals the served spec | `test_contract.py` | 2 |
+  | Golden numbers and snapshot integrity on the real data | `test_snapshot_golden.py`, `test_snapshot_integrity.py` | 12 |
+  | Performance budgets per endpoint | `test_performance.py` | 7 |
+  | Frontend unit and component tests with real API fixtures (MSW) | `frontend/src/**/*.test.ts(x)` | 47 |
+  | Accessibility: axe WCAG 2.1 AA on every page, dark and light | `frontend/e2e/a11y.spec.ts` | 6 |
+  | End to end: smoke and mobile, run against the Docker image in CI | `frontend/e2e/*.spec.ts` | 8 |
+
+  Coverage gates: backend 90% (currently 94%), frontend 80% of lines (currently 86%).
 - **Typed end to end.** mypy runs in strict mode. Pydantic models generate OpenAPI, the
   TypeScript types are generated from it, and CI fails if they drift.
 - **Quality gates.** ruff, ESLint (strict type-checked), Prettier, pre-commit hooks and CI on
@@ -194,8 +215,8 @@ See `.env.example`.
   - ETag and CDN caching.
   - 12-factor configuration and pinned lockfiles.
   - Dependabot.
-- **Accessibility.** The chart palette is validated for colour-blind separation in light and dark
-  mode. Every chart has a table view. Controls are keyboard-reachable, and every view is
+- **Accessibility.** axe audits every page in both themes in CI. The chart palette is validated
+  for colour-blind separation in light and dark mode. Every chart has a table view. Controls are keyboard-reachable, and every view is
   shareable through its URL.
 
 ## Use of AI tools

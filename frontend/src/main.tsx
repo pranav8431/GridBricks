@@ -1,4 +1,6 @@
 import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
+import '@fontsource-variable/space-grotesk';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import 'dayjs/locale/en-gb';
@@ -20,7 +22,7 @@ if (!container) throw new Error('Missing #root element');
 
 createRoot(container).render(
   <StrictMode>
-    <MantineProvider theme={theme} defaultColorScheme="light">
+    <MantineProvider theme={theme} defaultColorScheme="dark">
       <DatesProvider settings={{ locale: 'en-gb', firstDayOfWeek: 1 }}>
         <QueryClientProvider client={createQueryClient()}>
           <BrowserRouter>

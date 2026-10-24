@@ -22,6 +22,7 @@ import { ChartCard } from '../../components/ChartCard';
 import { QueryState } from '../../components/QueryState';
 import { RangeBar } from '../../components/RangeBar';
 import { RunTimeline } from '../../components/RunTimeline';
+import { Streamlines } from '../../components/Streamlines';
 import { useChartTokens } from '../../lib/chartTheme';
 import { addDays, calendarDate, ukTime } from '../../lib/format';
 import { briefHeadline, nextRunNote } from '../../lib/headline';
@@ -108,7 +109,8 @@ function DecisionHero({ brief, reveal }: { brief: BriefResponse; reveal: boolean
   const { energy } = brief;
   const lead = energy.p50_gwh ?? energy.forecast_gwh;
   return (
-    <Card padding="xl">
+    <Card padding="xl" className="gb-hero">
+      <Streamlines />
       <Stack gap="lg">
         <Box>
           <Text className="gb-eyebrow">Day-ahead brief</Text>

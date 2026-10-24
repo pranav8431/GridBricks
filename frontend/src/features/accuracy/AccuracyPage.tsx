@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router';
 import type { AccuracyResponse, HorizonResponse } from '../../api/client';
 import { useAccuracy, useHorizon, useMeta, type GateSelection } from '../../api/queries';
 import { ChartCard } from '../../components/ChartCard';
+import { Streamlines } from '../../components/Streamlines';
 import { EChart } from '../../components/EChart';
 import { ErrorCard, LoadingCard, QueryState } from '../../components/QueryState';
 import { useChartTokens } from '../../lib/chartTheme';
@@ -85,9 +86,10 @@ function AccuracyBanner({ accuracy }: { accuracy: AccuracyResponse }) {
   ];
   return (
     <Card padding="xl" className="gb-banner">
+      <Streamlines />
       <SimpleGrid cols={{ base: 1, md: 2 }} spacing={40}>
         <Box>
-          <Text className="gb-eyebrow" c="#7fb2ee">
+          <Text className="gb-eyebrow" c="#ffc531">
             The month in one line
           </Text>
           <Title order={2} fz={28} lh={1.25} mt={6} c="#ffffff">
