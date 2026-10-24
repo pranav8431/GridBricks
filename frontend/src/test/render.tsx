@@ -12,7 +12,7 @@ export function renderWithProviders(ui: ReactNode, { route = '/' }: { route?: st
     defaultOptions: { queries: { retry: false, staleTime: Infinity } },
   });
   return render(
-    <MantineProvider theme={theme}>
+    <MantineProvider theme={theme} env="test">
       <DatesProvider settings={{ firstDayOfWeek: 1 }}>
         <QueryClientProvider client={client}>
           <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>

@@ -30,9 +30,9 @@ typecheck: ## Static type checks (mypy strict, tsc)
 	cd $(BACKEND) && uv run mypy
 	cd $(FRONTEND) && npm run typecheck
 
-test: ## Backend and frontend tests
-	cd $(BACKEND) && uv run pytest --cov
-	cd $(FRONTEND) && npm test
+test: ## Backend and frontend tests with coverage gates
+	cd $(BACKEND) && uv run pytest --cov --cov-fail-under=90
+	cd $(FRONTEND) && npm run coverage
 
 check: lint typecheck test ## Everything CI runs before the Docker stage
 
@@ -47,8 +47,8 @@ up: ## Build and run the production container on http://localhost:8000
 down: ## Stop the container
 	docker compose down
 
-e2e: ## Browser smoke tests against http://localhost:8000
-	cd $(FRONTEND) && npx playwright test e2e/smoke.spec.ts
+e2e: ## Browser smoke, accessibility (axe) and mobile tests against http://localhost:8000
+	cd $(FRONTEND) && npx playwright test
 
 screenshots: ## Refresh docs/images (needs the app running on :8000)
 	cd $(FRONTEND) && SCREENSHOTS=1 npx playwright test e2e/screenshots.spec.ts

@@ -1,49 +1,63 @@
 /*
- * Design tokens. Chart colours follow the validated dataviz palette:
- *   published forecast = slot 1 (blue), actual outturn = slot 2 (orange),
- *   error-adjusted estimate = slot 3 (aqua). The same entity keeps its colour on every chart.
- * Dark values are separately chosen steps, not an automatic inversion.
+ * GridBricks "control room" design system.
+ * Chrome: blue-black surfaces, hairline borders, a dot-grid page, Space Grotesk display type,
+ * JetBrains Mono for figures, and one signal-amber accent reserved for UI state (never data).
+ * Data colours follow the validated dataviz palette: forecast = blue, actual = orange,
+ * corrected = aqua, each re-validated against these surfaces in both themes.
  */
 :root,
 :root[data-mantine-color-scheme='light'] {
-  --gb-page: #f9f9f7;
-  --gb-surface: #fcfcfb;
-  --gb-ink: #0b0b0b;
-  --gb-ink-2: #52514e;
-  --gb-muted: #6f6d68;
-  --gb-grid: #e1e0d9;
-  --gb-axis: #c3c2b7;
-  --gb-border: rgba(11, 11, 11, 0.1);
+  --gb-page: #eef1f5;
+  --gb-dot: rgba(18, 32, 47, 0.08);
+  --gb-surface: #ffffff;
+  --gb-surface-2: #f5f7fa;
+  --gb-ink: #0c1621;
+  --gb-ink-2: #4a5868;
+  --gb-muted: #5f6d7d;
+  --gb-grid: #e3e8ee;
+  --gb-axis: #c4ccd6;
+  --gb-border: #dbe2ea;
+  --gb-signal: #9a6a00;
+  --gb-signal-soft: rgba(242, 176, 0, 0.16);
   --gb-forecast: #2a78d6;
   --gb-actual: #eb6834;
   --gb-adjusted: #1baf7a;
   --gb-good-text: #006300;
   --gb-bad-text: #b42f2f;
   --gb-focus: #2a78d6;
+  --gb-rail: #0b131d;
 
   --mantine-color-body: var(--gb-page);
+  --mantine-color-dimmed: var(--gb-ink-2);
 }
 
 :root[data-mantine-color-scheme='dark'] {
-  --gb-page: #0d0d0d;
-  --gb-surface: #1a1a19;
-  --gb-ink: #f0efec;
-  --gb-ink-2: #c3c2b7;
-  --gb-muted: #9a988f;
-  --gb-grid: #2c2c2a;
-  --gb-axis: #383835;
-  --gb-border: rgba(255, 255, 255, 0.1);
+  --gb-page: #070c12;
+  --gb-dot: rgba(160, 190, 220, 0.07);
+  --gb-surface: #0f1720;
+  --gb-surface-2: #142030;
+  --gb-ink: #e8eef5;
+  --gb-ink-2: #a9b7c6;
+  --gb-muted: #8696a8;
+  --gb-grid: #1d2a38;
+  --gb-axis: #2c3c4e;
+  --gb-border: #1f2d3d;
+  --gb-signal: #ffc531;
+  --gb-signal-soft: rgba(255, 197, 49, 0.12);
   --gb-forecast: #3987e5;
   --gb-actual: #d95926;
   --gb-adjusted: #199e70;
-  --gb-good-text: #0ca30c;
-  --gb-bad-text: #e66767;
-  --gb-focus: #3987e5;
+  --gb-good-text: #3ccf6e;
+  --gb-bad-text: #ff7a7a;
+  --gb-focus: #ffc531;
+  --gb-rail: #0a1018;
 
   --mantine-color-body: var(--gb-page);
   --mantine-color-text: var(--gb-ink);
   --mantine-color-dimmed: var(--gb-ink-2);
   --mantine-color-bright: var(--gb-ink);
+  --mantine-color-default: var(--gb-surface-2);
+  --mantine-color-default-border: var(--gb-border);
 }
 
 body {
@@ -52,42 +66,71 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+.gb-main {
+  background-color: var(--gb-page);
+  background-image: radial-gradient(var(--gb-dot) 1px, transparent 1px);
+  background-size: 22px 22px;
+  min-height: 100vh;
+}
+
 .gb-card {
   background: var(--gb-surface);
   border-color: var(--gb-border);
-  box-shadow:
-    0 1px 2px rgba(16, 24, 40, 0.04),
-    0 4px 16px rgba(16, 24, 40, 0.05);
 }
 
-[data-mantine-color-scheme='dark'] .gb-card {
-  box-shadow: none;
+.gb-display {
+  font-family: 'Space Grotesk Variable', 'Inter Variable', system-ui, sans-serif;
 }
 
-/* Page heading block */
+.gb-mono,
+.gb-tabular td,
+.gb-tabular th {
+  font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.gb-tabular td:first-child,
+.gb-tabular th {
+  font-family: 'Inter Variable', system-ui, sans-serif;
+}
+
+/* Eyebrow: mono, uppercase, signal colour */
 .gb-eyebrow {
-  font-size: 12px;
+  font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--gb-forecast);
+  color: var(--gb-signal);
 }
 
 /* Hero figure: the one number a view leads with */
 .gb-hero-value {
-  font-size: clamp(44px, 6vw, 64px);
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.02em;
+  font-family: 'Space Grotesk Variable', 'Inter Variable', system-ui, sans-serif;
+  font-size: clamp(48px, 6.5vw, 76px);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
   color: var(--gb-ink);
 }
 
 .gb-hero-unit {
-  font-size: 0.45em;
-  font-weight: 600;
-  margin-left: 6px;
+  font-size: 0.38em;
+  font-weight: 500;
+  margin-left: 8px;
   color: var(--gb-ink-2);
   letter-spacing: 0;
+}
+
+.gb-stat-value {
+  font-family: 'Space Grotesk Variable', 'Inter Variable', system-ui, sans-serif;
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--gb-ink);
 }
 
 /* Icon badge on stat tiles */
@@ -95,28 +138,119 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
   flex: none;
+}
+
+/* Hero card with the wind-streamline motif */
+.gb-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.gb-streamlines {
+  position: absolute;
+  top: -10px;
+  right: -40px;
+  width: 520px;
+  height: 220px;
+  color: var(--gb-forecast);
+  opacity: 0.18;
+  pointer-events: none;
 }
 
 /* Insight banner */
 .gb-banner {
-  background: linear-gradient(135deg, #12202f 0%, #1c3550 100%);
-  color: #f0efec;
-  border: none;
+  position: relative;
+  overflow: hidden;
+  background: var(--gb-rail);
+  color: #e8eef5;
+  border: 1px solid #1f2d3d;
 }
 
 .gb-banner .gb-banner-muted {
-  color: #b8c7d6;
+  color: #a9b7c6;
 }
 
 .gb-banner-stat {
-  font-size: 32px;
-  font-weight: 700;
-  line-height: 1.1;
+  font-family: 'Space Grotesk Variable', 'Inter Variable', system-ui, sans-serif;
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
   color: #ffffff;
+}
+
+/* Sidebar rail */
+.gb-rail {
+  background: var(--gb-rail);
+  border-right: 1px solid #1a2634 !important;
+  color: #e8eef5;
+}
+
+.gb-rail-label {
+  font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8193a8;
+  padding: 0 12px;
+}
+
+.gb-nav-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #b9c6d4;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    background 120ms ease,
+    color 120ms ease;
+}
+
+.gb-nav-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+.gb-nav-link[aria-current='page'] {
+  background: rgba(255, 197, 49, 0.1);
+  color: #ffffff;
+}
+
+.gb-nav-link[aria-current='page']::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: #ffc531;
+}
+
+.gb-nav-link[aria-current='page'] svg {
+  color: #ffc531;
+}
+
+.gb-gate-clock {
+  border: 1px solid #1f2d3d;
+  border-radius: 10px;
+  padding: 12px;
+  background: #0f1822;
+}
+
+.gb-nav-link:focus-visible,
+.gb-focusable:focus-visible {
+  outline: 2px solid var(--gb-focus);
+  outline-offset: 2px;
 }
 
 /* Range bar: published forecast, corrected estimate, likely range and actual on one scale */
@@ -170,54 +304,6 @@ body {
   border-radius: 3px;
   margin-right: 6px;
   vertical-align: baseline;
-}
-
-.gb-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: #12202f;
-  color: #f0efec;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.06),
-    0 8px 24px rgba(10, 20, 35, 0.18);
-}
-
-.gb-header-sub {
-  color: #9fb3c8;
-}
-
-.gb-nav-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 14px;
-  border-radius: 999px;
-  color: #c9d6e3;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  white-space: nowrap;
-  transition:
-    background 120ms ease,
-    color 120ms ease;
-}
-
-.gb-nav-link:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
-}
-
-.gb-nav-link[aria-current='page'] {
-  background: #ffffff;
-  color: #12202f;
-  font-weight: 600;
-}
-
-.gb-nav-link:focus-visible,
-.gb-focusable:focus-visible {
-  outline: 2px solid var(--gb-focus);
-  outline-offset: 2px;
 }
 
 .gb-tabular {
@@ -329,4 +415,10 @@ body {
   .gb-refetching {
     transition: none;
   }
+}
+
+.gb-hero > *:not(.gb-streamlines),
+.gb-banner > *:not(.gb-streamlines) {
+  position: relative;
+  z-index: 1;
 }

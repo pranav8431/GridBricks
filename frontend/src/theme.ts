@@ -1,4 +1,4 @@
-import { Card, createTheme, Paper, type MantineColorsTuple } from '@mantine/core';
+import { Anchor, Card, createTheme, Paper, type MantineColorsTuple } from '@mantine/core';
 
 /** The dataviz sequential blue ramp, so UI accents and the forecast series share one hue. */
 const gbBlue: MantineColorsTuple = [
@@ -16,20 +16,23 @@ const gbBlue: MantineColorsTuple = [
 
 export const theme = createTheme({
   primaryColor: 'gbBlue',
-  primaryShade: { light: 6, dark: 5 },
+  primaryShade: { light: 8, dark: 4 },
   colors: { gbBlue },
   fontFamily: '"Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+  fontFamilyMonospace: '"JetBrains Mono Variable", ui-monospace, monospace',
   headings: {
-    fontFamily: '"Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-    fontWeight: '700',
+    fontFamily: '"Space Grotesk Variable", "Inter Variable", system-ui, sans-serif',
+    fontWeight: '600',
   },
-  defaultRadius: 'md',
+  defaultRadius: 'sm',
   cursorType: 'pointer',
   components: {
     Card: Card.extend({
-      defaultProps: { withBorder: true, radius: 'lg', padding: 'lg' },
+      defaultProps: { withBorder: true, radius: 'md', padding: 'lg' },
       classNames: { root: 'gb-card' },
     }),
     Paper: Paper.extend({ classNames: { root: 'gb-card' } }),
+    // Links are underlined so they never rely on colour alone (WCAG 1.4.1).
+    Anchor: Anchor.extend({ defaultProps: { underline: 'always' } }),
   },
 });

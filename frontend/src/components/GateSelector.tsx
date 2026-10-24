@@ -1,4 +1,4 @@
-import { Group, Select } from '@mantine/core';
+import { Select, Stack } from '@mantine/core';
 import { TimeInput } from '@mantine/dates';
 import { useEffect, useState } from 'react';
 
@@ -27,7 +27,7 @@ export function GateSelector() {
   };
 
   return (
-    <Group gap="xs" wrap="nowrap">
+    <Stack gap={8}>
       <Select
         aria-label="Decision time (auction gate closure on the day before delivery)"
         data={options}
@@ -40,7 +40,7 @@ export function GateSelector() {
           }
         }}
         allowDeselect={false}
-        w={230}
+        w="100%"
         size="sm"
         comboboxProps={{ withinPortal: true }}
       />
@@ -53,10 +53,10 @@ export function GateSelector() {
           onKeyDown={(event) => {
             if (event.key === 'Enter') commit(draft);
           }}
-          w={110}
+          w="100%"
           size="sm"
         />
       ) : null}
-    </Group>
+    </Stack>
   );
 }

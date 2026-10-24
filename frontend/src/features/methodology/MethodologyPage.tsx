@@ -209,12 +209,13 @@ function Quality({ quality }: { quality: QualityResponse }) {
           variant="light"
           tt="none"
           color={complete ? 'green' : 'yellow'}
+          c="var(--gb-good-text)"
           leftSection={complete ? <IconCircleCheck size={14} /> : <IconAlertTriangle size={14} />}
         >
           {quality.actual_periods_present.toLocaleString('en-GB')} of{' '}
           {quality.actual_periods_expected.toLocaleString('en-GB')} half-hours present
         </Badge>
-        <Badge variant="light" color="gray" tt="none">
+        <Badge variant="light" color="gray" tt="none" c="var(--gb-ink-2)">
           {quality.forecast_runs} forecast runs
         </Badge>
       </Group>
