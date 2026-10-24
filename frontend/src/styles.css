@@ -1,0 +1,207 @@
+/*
+ * Design tokens. Chart colours follow the validated dataviz palette:
+ *   published forecast = slot 1 (blue), actual outturn = slot 2 (orange),
+ *   error-adjusted estimate = slot 3 (aqua). The same entity keeps its colour on every chart.
+ * Dark values are separately chosen steps, not an automatic inversion.
+ */
+:root,
+:root[data-mantine-color-scheme='light'] {
+  --gb-page: #f9f9f7;
+  --gb-surface: #fcfcfb;
+  --gb-ink: #0b0b0b;
+  --gb-ink-2: #52514e;
+  --gb-muted: #6f6d68;
+  --gb-grid: #e1e0d9;
+  --gb-axis: #c3c2b7;
+  --gb-border: rgba(11, 11, 11, 0.1);
+  --gb-forecast: #2a78d6;
+  --gb-actual: #eb6834;
+  --gb-adjusted: #1baf7a;
+  --gb-good-text: #006300;
+  --gb-bad-text: #b42f2f;
+  --gb-focus: #2a78d6;
+
+  --mantine-color-body: var(--gb-page);
+}
+
+:root[data-mantine-color-scheme='dark'] {
+  --gb-page: #0d0d0d;
+  --gb-surface: #1a1a19;
+  --gb-ink: #f0efec;
+  --gb-ink-2: #c3c2b7;
+  --gb-muted: #9a988f;
+  --gb-grid: #2c2c2a;
+  --gb-axis: #383835;
+  --gb-border: rgba(255, 255, 255, 0.1);
+  --gb-forecast: #3987e5;
+  --gb-actual: #d95926;
+  --gb-adjusted: #199e70;
+  --gb-good-text: #0ca30c;
+  --gb-bad-text: #e66767;
+  --gb-focus: #3987e5;
+
+  --mantine-color-body: var(--gb-page);
+  --mantine-color-text: var(--gb-ink);
+  --mantine-color-dimmed: var(--gb-ink-2);
+  --mantine-color-bright: var(--gb-ink);
+}
+
+body {
+  background: var(--gb-page);
+  color: var(--gb-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+.gb-card {
+  background: var(--gb-surface);
+  border-color: var(--gb-border);
+}
+
+.gb-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: color-mix(in srgb, var(--gb-surface) 92%, transparent);
+  backdrop-filter: saturate(1.4) blur(8px);
+  border-bottom: 1px solid var(--gb-border);
+}
+
+.gb-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  color: var(--gb-ink-2);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.gb-nav-link:hover {
+  background: var(--gb-border);
+  color: var(--gb-ink);
+}
+
+.gb-nav-link[aria-current='page'] {
+  background: color-mix(in srgb, var(--gb-forecast) 14%, transparent);
+  color: var(--gb-ink);
+}
+
+.gb-nav-link:focus-visible,
+.gb-focusable:focus-visible {
+  outline: 2px solid var(--gb-focus);
+  outline-offset: 2px;
+}
+
+.gb-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.gb-refetching {
+  opacity: 0.55;
+  transition: opacity 150ms ease;
+}
+
+.gb-legend-key {
+  display: inline-block;
+  width: 18px;
+  height: 0;
+  border-top: 2px solid currentColor;
+  vertical-align: middle;
+}
+
+.gb-legend-key[data-dashed='true'] {
+  border-top-style: dashed;
+}
+
+.gb-legend-swatch {
+  display: inline-block;
+  width: 14px;
+  height: 10px;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+
+/* Run timeline */
+.gb-timeline {
+  position: relative;
+  height: 64px;
+  margin: 8px 6px 0;
+}
+
+.gb-timeline-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 26px;
+  border-top: 1px solid var(--gb-axis);
+}
+
+.gb-timeline-tick {
+  position: absolute;
+  top: 44px;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: var(--gb-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.gb-timeline-run {
+  position: absolute;
+  top: 20px;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  border-radius: 50%;
+  border: 2px solid var(--gb-surface);
+  box-shadow: 0 0 0 1.5px var(--gb-axis);
+  background: var(--gb-surface);
+  padding: 0;
+  cursor: default;
+}
+
+.gb-timeline-run[data-available='true'] {
+  background: var(--gb-forecast);
+  box-shadow: 0 0 0 1.5px var(--gb-forecast);
+}
+
+.gb-timeline-run[data-used='true'] {
+  top: 17px;
+  width: 18px;
+  height: 18px;
+  margin-left: -9px;
+}
+
+.gb-timeline-gate {
+  position: absolute;
+  top: 2px;
+  bottom: 22px;
+  border-left: 2px solid var(--gb-ink);
+}
+
+.gb-timeline-gate-label {
+  position: absolute;
+  top: -4px;
+  left: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gb-ink);
+  white-space: nowrap;
+}
+
+.gb-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gb-refetching {
+    transition: none;
+  }
+}
