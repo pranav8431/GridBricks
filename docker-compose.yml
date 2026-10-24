@@ -1,0 +1,10 @@
+# Production-like local run: http://localhost:8000
+services:
+  app:
+    build: .
+    image: gridbricks:local
+    ports:
+      - "8000:8000"
+    environment:
+      GRIDBRICKS_LOG_LEVEL: INFO
+    restart: unless-stopped
