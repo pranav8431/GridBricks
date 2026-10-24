@@ -18,6 +18,8 @@ import {
   signedGw,
   signedGwh,
   ukDateTime,
+  ukTime,
+  UK_TZ,
 } from '../../lib/format';
 
 const ms = (iso: string) => Date.parse(iso);
@@ -424,6 +426,109 @@ export function horizonOption(h: HorizonResponse, t: ChartTokens): ChartOption {
         itemStyle: { color: t.forecast, borderColor: t.surface, borderWidth: 2 },
         symbolSize: 8,
         showSymbol: false,
+      },
+    ],
+  };
+}
+
+const deliveryDay = (iso: string) =>
+  new Intl.DateTimeFormat('en-CA', { timeZone: UK_TZ }).format(
+    new Date(Date.parse(iso) + 3_600_000),
+  );
+
+export interface HourlyErrorRow {
+  hour: string;
+  n: number;
+  meanErrorMw: number;
+  meanAbsErrorMw: number;
+}
+
+/** Mean error by delivery hour (UK), in product order from 23:00: the table twin of the heatmap. */
+export function errorByHour(acc: AccuracyResponse): HourlyErrorRow[] {
+  const groups = new Map<string, number[]>();
+  for (const row of acc.series) {
+    if (row.forecast_mw == null || row.actual_mw == null) continue;
+    const hour = ukTime(row.start_time);
+    groups.set(hour, [...(groups.get(hour) ?? []), row.forecast_mw - row.actual_mw]);
+  }
+  const order = (h: string) => (Number(h.slice(0, 2)) + 1) % 24;
+  return [...groups.entries()]
+    .sort(([a], [b]) => order(a) - order(b))
+    .map(([hour, errors]) => ({
+      hour,
+      n: errors.length,
+      meanErrorMw: errors.reduce((a, b) => a + b, 0) / errors.length,
+      meanAbsErrorMw: errors.reduce((a, b) => a + Math.abs(b), 0) / errors.length,
+    }));
+}
+
+/** Error for every delivery hour of every day: shows when in the day and the month misses cluster. */
+export function errorHeatmapOption(acc: AccuracyResponse, t: ChartTokens): ChartOption {
+  const base = baseOption(t);
+  const days = acc.daily.map((d) => d.delivery_date);
+  const hours = errorByHour(acc).map((r) => r.hour);
+  const cells: [number, number, number][] = [];
+  for (const row of acc.series) {
+    if (row.forecast_mw == null || row.actual_mw == null) continue;
+    const x = days.indexOf(deliveryDay(row.start_time));
+    const y = hours.indexOf(ukTime(row.start_time));
+    if (x >= 0 && y >= 0) cells.push([x, y, Math.round(row.forecast_mw - row.actual_mw)]);
+  }
+  const peak = Math.max(1000, ...cells.map((c) => Math.abs(c[2])));
+  const limit = Math.ceil(peak / 1000) * 1000;
+  return {
+    ...base,
+    grid: { ...base.grid, top: 8, bottom: 56, left: 8 },
+    tooltip: {
+      ...base.tooltip,
+      trigger: 'item',
+      formatter: (params: unknown) => {
+        const value = (params as { value?: [number, number, number] }).value;
+        if (!value) return '';
+        const day = days[value[0]] ?? '';
+        return tooltipHtml(
+          `Delivery ${calendarDate(day, false)} · ${hours[value[1]] ?? ''}`,
+          [{ label: 'Forecast error (forecast − actual)', value: signedGw(value[2], 2) }],
+          t,
+        );
+      },
+    },
+    xAxis: {
+      type: 'category',
+      data: days.map((d) => String(Number(d.slice(8)))),
+      axisLabel: { color: t.muted, interval: 1 },
+      axisLine: { lineStyle: { color: t.axis } },
+      axisTick: { show: false },
+      splitArea: { show: false },
+    },
+    yAxis: {
+      type: 'category',
+      data: hours,
+      inverse: true,
+      axisLabel: { color: t.muted, interval: 2 },
+      axisLine: { show: false },
+      axisTick: { show: false },
+    },
+    visualMap: {
+      type: 'continuous',
+      min: -limit,
+      max: limit,
+      orient: 'horizontal',
+      left: 'center',
+      bottom: 0,
+      itemWidth: 10,
+      itemHeight: 180,
+      text: ['Over-forecast', 'Under-forecast'],
+      textStyle: { color: t.ink2, fontSize: 11 },
+      inRange: { color: [t.divergingLow, t.divergingMid, t.divergingHigh] },
+      formatter: (value: number) => signedGw(value, 1),
+    },
+    series: [
+      {
+        type: 'heatmap',
+        data: cells,
+        itemStyle: { borderColor: t.surface, borderWidth: 1 },
+        emphasis: { itemStyle: { borderColor: t.ink, borderWidth: 1 } },
       },
     ],
   };

@@ -23,6 +23,7 @@ export interface ChartTokens {
   divergingMid: string;
   divergingHigh: string;
   windowFill: string;
+  revisionFill: string;
 }
 
 export const LIGHT: ChartTokens = {
@@ -42,6 +43,7 @@ export const LIGHT: ChartTokens = {
   divergingMid: '#eef1f5',
   divergingHigh: '#e34948',
   windowFill: 'rgba(12,22,33,0.05)',
+  revisionFill: 'rgba(42,120,214,0.18)',
 };
 
 export const DARK: ChartTokens = {
@@ -61,13 +63,15 @@ export const DARK: ChartTokens = {
   divergingMid: '#1d2a38',
   divergingHigh: '#e66767',
   windowFill: 'rgba(255,255,255,0.05)',
+  revisionFill: 'rgba(57,135,229,0.26)',
 };
 
 export function useChartTokens(): ChartTokens {
   return useComputedColorScheme('light') === 'dark' ? DARK : LIGHT;
 }
 
-export const FONT = '"Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
+export const FONT =
+  '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Inter Variable", "Segoe UI", Roboto, sans-serif';
 
 export function baseOption(t: ChartTokens) {
   return {

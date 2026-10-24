@@ -1,4 +1,5 @@
 import { screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Route, Routes } from 'react-router';
 
 import { renderWithProviders } from '../../test/render';
@@ -44,5 +45,24 @@ describe('AccuracyPage', () => {
     expect(within(comparison).getByText('N2EX · 09:50')).toBeInTheDocument();
     const worst = screen.getAllByRole('link', { name: 'Wed 28 Jan 2026' })[0];
     expect(worst).toHaveAttribute('href', '/brief?date=2026-01-27&reveal=1');
+  });
+
+  it('downloads the daily table as CSV', async () => {
+    const user = userEvent.setup();
+    const created = vi.fn(() => 'blob:daily');
+    URL.createObjectURL = created;
+    URL.revokeObjectURL = vi.fn();
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+    renderWithProviders(
+      <Routes>
+        <Route path="/accuracy" element={<AccuracyPage />} />
+      </Routes>,
+      { route: '/accuracy' },
+    );
+    await screen.findByText(/overstated wind/);
+    await user.click(screen.getByRole('button', { name: 'CSV' }));
+    expect(created).toHaveBeenCalledTimes(1);
+    expect(click).toHaveBeenCalledTimes(1);
+    click.mockRestore();
   });
 });

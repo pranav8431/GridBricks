@@ -1,6 +1,17 @@
-import { Alert, Box, Card, Group, SimpleGrid, Stack, Text, Title } from '@mantine/core';
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  Group,
+  SimpleGrid,
+  Stack,
+  Table,
+  Text,
+  Title,
+} from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
-import { IconBulb } from '@tabler/icons-react';
+import { IconBulb, IconDownload } from '@tabler/icons-react';
 import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 
@@ -12,10 +23,13 @@ import { EChart } from '../../components/EChart';
 import { ErrorCard, LoadingCard, QueryState } from '../../components/QueryState';
 import { useChartTokens } from '../../lib/chartTheme';
 import { addDays, calendarDate, gw, gwh, pct, signedGw } from '../../lib/format';
+import { dailyCsv, downloadText } from '../../lib/revisions';
 import { gateQueryString, parseDate, useGateSelection, useUrlState } from '../../lib/params';
 import { AccuracyKpis } from './AccuracyKpis';
 import {
   calendarOption,
+  errorByHour,
+  errorHeatmapOption,
   histogramOption,
   horizonOption,
   levelOption,
@@ -137,6 +151,7 @@ function AccuracyContent({
       calendar: calendarOption(data, t),
       histogram: histogramOption(data, t),
       level: levelOption(data, t),
+      heatmap: errorHeatmapOption(data, t),
     }),
     [data, t],
   );
@@ -172,6 +187,21 @@ function AccuracyContent({
           { label: 'Likely range (P10–P90)', color: t.bandFill, kind: 'area' },
         ]}
         table={() => <DailyTable days={data.daily} selection={selection} />}
+        actions={
+          <Button
+            size="xs"
+            variant="default"
+            leftSection={<IconDownload size={14} />}
+            onClick={() =>
+              downloadText(
+                `gridbricks-daily-accuracy-${data.gate.id}-${data.decision_from}-${data.decision_to}.csv`,
+                dailyCsv(data.daily),
+              )
+            }
+          >
+            CSV
+          </Button>
+        }
       >
         <EChart
           option={options.series}
@@ -179,6 +209,39 @@ function AccuracyContent({
           label="Hourly forecast at decision time against actual wind outturn over the period."
         />
         <SeriesNote accuracy={data} />
+      </ChartCard>
+
+      <ChartCard
+        title="Error by hour and day"
+        subtitle="Every delivery hour of every day. Red is over-forecast: less wind than the desk planned for."
+        table={() => (
+          <Table className="gb-tabular" fz="sm" verticalSpacing={2} striped>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>Hour (UK)</Table.Th>
+                <Table.Th ta="right">Days</Table.Th>
+                <Table.Th ta="right">Mean error</Table.Th>
+                <Table.Th ta="right">Mean absolute error</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {errorByHour(data).map((row) => (
+                <Table.Tr key={row.hour}>
+                  <Table.Td>{row.hour}</Table.Td>
+                  <Table.Td ta="right">{row.n}</Table.Td>
+                  <Table.Td ta="right">{signedGw(row.meanErrorMw, 2)}</Table.Td>
+                  <Table.Td ta="right">{gw(row.meanAbsErrorMw, 2)}</Table.Td>
+                </Table.Tr>
+              ))}
+            </Table.Tbody>
+          </Table>
+        )}
+      >
+        <EChart
+          option={options.heatmap}
+          height={460}
+          label="Heatmap of forecast error for every delivery hour and day."
+        />
       </ChartCard>
 
       <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="lg">

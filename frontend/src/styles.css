@@ -1,12 +1,15 @@
 /*
  * GridBricks "control room" design system.
- * Chrome: blue-black surfaces, hairline borders, a dot-grid page, Space Grotesk display type,
- * JetBrains Mono for figures, and one signal-amber accent reserved for UI state (never data).
+ * Chrome: blue-black surfaces, hairline borders, a dot-grid page, Apple's San Francisco type
+ * throughout (Inter on other systems), and one signal-amber accent reserved for UI state.
  * Data colours follow the validated dataviz palette: forecast = blue, actual = orange,
  * corrected = aqua, each re-validated against these surfaces in both themes.
  */
 :root,
 :root[data-mantine-color-scheme='light'] {
+  --gb-font:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue',
+    'Inter Variable', 'Segoe UI', Roboto, sans-serif;
   --gb-page: #eef1f5;
   --gb-dot: rgba(18, 32, 47, 0.08);
   --gb-surface: #ffffff;
@@ -79,24 +82,24 @@ body {
 }
 
 .gb-display {
-  font-family: 'Space Grotesk Variable', 'Inter Variable', system-ui, sans-serif;
+  font-family: var(--gb-font);
 }
 
 .gb-mono,
 .gb-tabular td,
 .gb-tabular th {
-  font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+  font-family: var(--gb-font);
   font-variant-numeric: tabular-nums;
 }
 
 .gb-tabular td:first-child,
 .gb-tabular th {
-  font-family: 'Inter Variable', system-ui, sans-serif;
+  font-family: var(--gb-font);
 }
 
 /* Eyebrow: mono, uppercase, signal colour */
 .gb-eyebrow {
-  font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+  font-family: var(--gb-font);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -106,7 +109,7 @@ body {
 
 /* Hero figure: the one number a view leads with */
 .gb-hero-value {
-  font-family: 'Space Grotesk Variable', 'Inter Variable', system-ui, sans-serif;
+  font-family: var(--gb-font);
   font-size: clamp(48px, 6.5vw, 76px);
   font-weight: 600;
   line-height: 0.95;
@@ -124,7 +127,7 @@ body {
 }
 
 .gb-stat-value {
-  font-family: 'Space Grotesk Variable', 'Inter Variable', system-ui, sans-serif;
+  font-family: var(--gb-font);
   font-size: 30px;
   font-weight: 600;
   line-height: 1.1;
@@ -175,7 +178,7 @@ body {
 }
 
 .gb-banner-stat {
-  font-family: 'Space Grotesk Variable', 'Inter Variable', system-ui, sans-serif;
+  font-family: var(--gb-font);
   font-size: 34px;
   font-weight: 600;
   line-height: 1.05;
@@ -191,7 +194,7 @@ body {
 }
 
 .gb-rail-label {
-  font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+  font-family: var(--gb-font);
   font-size: 10.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;

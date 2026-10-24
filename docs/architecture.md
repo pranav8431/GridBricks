@@ -128,7 +128,7 @@ sequenceDiagram
 | Server state | TanStack Query hooks in `src/api/queries.ts`. 4xx errors are not retried. |
 | API contract | `openapi-typescript` generates `schema.d.ts` from the backend's OpenAPI. The `openapi-fetch` client is fully typed. CI regenerates both files and fails on any diff. |
 | Charts | ECharts, tree-shaken to the five chart types used, with the SVG renderer. Option builders are pure functions in `chartOptions.ts` and `charts.ts`, unit-tested without a DOM. |
-| Visual system | Mantine plus the GridBricks token layer in `styles.css`: dark-first control-room chrome, sidebar rail with a turbine mark, amber signal accent for UI state only, Space Grotesk display and JetBrains Mono data type (self-hosted), dot-grid canvas and streamline motif. Data colours are fixed per entity (forecast blue, actual orange, corrected aqua) and validated for colour-blind separation against both surfaces. |
+| Visual system | Mantine plus the GridBricks token layer in `styles.css`: dark-first control-room chrome, sidebar rail with the bar mark, amber signal accent for UI state only, Apple's San Francisco typeface throughout (Inter bundled as the fallback), dot-grid canvas and streamline motif. Data colours are fixed per entity (forecast blue, actual orange, corrected aqua) and validated for colour-blind separation against both surfaces. |
 | Time | Every instant is shown in UK time via `Intl` with `Europe/London`, whatever the viewer's timezone. Calendar dates are never shifted. |
 | Accessibility | Every chart has a table view. There are ARIA labels, a skip link, keyboard-reachable controls and visible focus. |
 | Resilience | An error boundary per page, problem+json messages with a retry action, and lazy-loaded secondary pages. |

@@ -1,6 +1,6 @@
 # Testing
 
-166 automated tests in nine kinds, from pure functions to the production Docker image in a real
+177 automated tests in nine kinds, from pure functions to the production Docker image in a real
 browser. Each kind exists to catch a different class of mistake.
 
 | Kind | What it proves | Where | Count |
@@ -13,7 +13,7 @@ browser. Each kind exists to catch a different class of mistake.
 | **Contract** | The frontend's committed OpenAPI document equals the spec the API serves, so generated TypeScript types cannot drift | `test_contract.py` | 2 |
 | **Golden and data integrity** | January headline numbers (MAE, bias, coverage, daily energy error) and the snapshot's checksums, uniqueness and coverage | `test_snapshot_golden.py`, `test_snapshot_integrity.py` | 12 |
 | **Performance** | Cold start under 10 s; warm median latency per endpoint within budget (50–600 ms) | `test_performance.py` | 7 |
-| **Frontend unit and component** | Formatting, URL state, headline text, chart option builders, and every shared component and page against real API fixtures served by Mock Service Worker | `frontend/src/**/*.test.ts(x)` | 47 |
+| **Frontend unit and component** | Formatting, URL state, headline text, revision and agreement maths, CSV export, chart option builders (including the error heatmap), keyboard shortcuts, and every shared component and page against real API fixtures served by Mock Service Worker | `frontend/src/**/*.test.ts(x)` | 58 |
 | **Accessibility** | axe WCAG 2.1 AA audit of every page in dark and light themes; serious or critical findings fail | `frontend/e2e/a11y.spec.ts` | 6 |
 | **End to end** | Smoke journeys in a non-UK browser timezone, plus phone layout: menu, navigation, no sideways scroll | `frontend/e2e/smoke.spec.ts`, `mobile.spec.ts` | 8 |
 

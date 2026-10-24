@@ -36,18 +36,16 @@ const NAV: { to: string; label: string; icon: ReactNode }[] = [
   { to: '/methodology', label: 'Methodology & data', icon: <IconBook2 size={18} stroke={1.6} /> },
 ];
 
-/** Turbine mark: three blades around a hub, on the signal accent. */
-export function TurbineMark({ size = 34 }: { size?: number }) {
+/** GridBricks mark: three rising bars on blue. */
+export function BrandMark({ size = 34 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 40 40" aria-hidden>
-      <rect width="40" height="40" rx="10" fill="#ffc531" />
-      <g fill="#0b131d" transform="translate(20 17)">
-        <path d="M0 -1.5 C1.6 -6 1.2 -11 0 -13 C-1.2 -11 -1.6 -6 0 -1.5Z" />
-        <path d="M0 -1.5 C1.6 -6 1.2 -11 0 -13 C-1.2 -11 -1.6 -6 0 -1.5Z" transform="rotate(120)" />
-        <path d="M0 -1.5 C1.6 -6 1.2 -11 0 -13 C-1.2 -11 -1.6 -6 0 -1.5Z" transform="rotate(240)" />
-        <circle r="2.2" />
+    <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden>
+      <rect width="32" height="32" rx="7" fill="#2a78d6" />
+      <g fill="#ffffff">
+        <rect x="6" y="18" width="5" height="8" rx="1.5" />
+        <rect x="13.5" y="12" width="5" height="14" rx="1.5" />
+        <rect x="21" y="6" width="5" height="20" rx="1.5" />
       </g>
-      <rect x="19" y="19" width="2" height="15" rx="1" fill="#0b131d" />
     </svg>
   );
 }
@@ -55,7 +53,7 @@ export function TurbineMark({ size = 34 }: { size?: number }) {
 function Brand() {
   return (
     <Group gap="sm" wrap="nowrap">
-      <TurbineMark />
+      <BrandMark />
       <Box>
         <Text fw={600} lh={1.1} c="#ffffff" className="gb-display" fz={17}>
           GridBricks

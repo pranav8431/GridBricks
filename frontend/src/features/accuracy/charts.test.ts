@@ -2,6 +2,8 @@ import { LIGHT } from '../../lib/chartTheme';
 import { accuracy, horizon } from '../../test/fixtures';
 import {
   calendarOption,
+  errorByHour,
+  errorHeatmapOption,
   histogramOption,
   horizonOption,
   levelOption,
@@ -68,5 +70,23 @@ describe('accuracy chart options', () => {
     ]) as string;
     expect(html).toContain('<strong');
     expect(html).toContain('Forecast error');
+  });
+});
+
+describe('error heatmap', () => {
+  it('places every hourly error on a day by hour grid', () => {
+    const option = errorHeatmapOption(accuracy, LIGHT) as Any;
+    expect(option.series[0].data).toHaveLength(accuracy.published.n);
+    expect(option.xAxis.data).toHaveLength(accuracy.daily.length);
+    expect(option.yAxis.data[0]).toBe('23:00');
+    expect(option.visualMap.min).toBe(-option.visualMap.max);
+  });
+
+  it('summarises error by hour in product order', () => {
+    const rows = errorByHour(accuracy);
+    expect(rows).toHaveLength(24);
+    expect(rows[0]?.hour).toBe('23:00');
+    expect(rows.at(-1)?.hour).toBe('22:00');
+    expect(rows.reduce((sum, r) => sum + r.n, 0)).toBe(accuracy.published.n);
   });
 });

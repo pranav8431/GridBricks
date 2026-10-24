@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { Route, Routes } from 'react-router';
 
+import { LocationProbe } from '../../test/LocationProbe';
 import { renderWithProviders } from '../../test/render';
 import { server } from '../../test/server';
 import { BriefPage } from './BriefPage';
@@ -18,7 +19,15 @@ afterAll(() => server.close());
 const renderBrief = () =>
   renderWithProviders(
     <Routes>
-      <Route path="/brief" element={<BriefPage />} />
+      <Route
+        path="/brief"
+        element={
+          <>
+            <BriefPage />
+            <LocationProbe />
+          </>
+        }
+      />
     </Routes>,
     { route: '/brief?date=2026-01-14' },
   );
@@ -59,5 +68,24 @@ describe('BriefPage', () => {
     const alert = await screen.findByRole('alert');
     expect(alert).toHaveTextContent('Outside pilot scope');
     expect(alert).toHaveTextContent('Decision date is outside the pilot scope.');
+  });
+
+  it('keyboard shortcuts step through days and toggle the outturn', async () => {
+    const user = userEvent.setup();
+    renderBrief();
+    await screen.findByTestId('brief-headline');
+    await user.keyboard('{ArrowRight}');
+    expect(screen.getByTestId('location')).toHaveTextContent('date=2026-01-15');
+    await user.keyboard('{ArrowLeft}{ArrowLeft}');
+    expect(screen.getByTestId('location')).toHaveTextContent('date=2026-01-13');
+    await user.keyboard('r');
+    expect(screen.getByTestId('location')).toHaveTextContent('reveal=1');
+  });
+
+  it('shows the run-to-run revision panel once both views have loaded', async () => {
+    renderBrief();
+    expect(await screen.findByText('What changed since the previous run')).toBeInTheDocument();
+    expect(screen.getByText('Stable since last run')).toBeInTheDocument();
+    expect(screen.getByTestId('revision-facts')).toHaveTextContent('Revision over the day');
   });
 });

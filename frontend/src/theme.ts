@@ -18,10 +18,13 @@ export const theme = createTheme({
   primaryColor: 'gbBlue',
   primaryShade: { light: 8, dark: 4 },
   colors: { gbBlue },
-  fontFamily: '"Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-  fontFamilyMonospace: '"JetBrains Mono Variable", ui-monospace, monospace',
+  // Apple's San Francisco everywhere; Inter (bundled) is the closest match on other systems.
+  fontFamily:
+    '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Inter Variable", "Segoe UI", Roboto, sans-serif',
+  fontFamilyMonospace: '"SF Mono", ui-monospace, Menlo, monospace',
   headings: {
-    fontFamily: '"Space Grotesk Variable", "Inter Variable", system-ui, sans-serif',
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Inter Variable", "Segoe UI", Roboto, sans-serif',
     fontWeight: '600',
   },
   defaultRadius: 'sm',

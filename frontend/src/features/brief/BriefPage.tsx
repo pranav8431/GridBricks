@@ -13,6 +13,7 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
+import { useHotkeys } from '@mantine/hooks';
 import { IconChevronLeft, IconChevronRight, IconDownload } from '@tabler/icons-react';
 import { useEffect } from 'react';
 
@@ -32,6 +33,7 @@ import { deliveryLegend, evolutionLegend } from './chartOptions';
 import { DeliveryChart } from './DeliveryChart';
 import { EvolutionChart } from './EvolutionChart';
 import { HourlyTable } from './HourlyTable';
+import { RevisionPanel } from './RevisionPanel';
 
 function DecisionControls({
   meta,
@@ -100,6 +102,9 @@ function DecisionControls({
           size="md"
         />
       </Group>
+      <Text size="xs" c="var(--gb-muted)" mt="xs" visibleFrom="sm">
+        Shortcuts: ← → change day · R reveal or hide the outturn
+      </Text>
     </Card>
   );
 }
@@ -186,6 +191,20 @@ export function BriefPage() {
   const evolution = useEvolution(decisionDate, selection);
   const t = useChartTokens();
 
+  // Trader shortcuts: arrows step through decision days, R toggles the outturn.
+  const step = (days: number) => {
+    if (!decisionDate || !meta.data) return;
+    const next = addDays(decisionDate, days);
+    if (next >= meta.data.first_decision_date && next <= meta.data.last_decision_date) {
+      update({ date: next });
+    }
+  };
+  useHotkeys([
+    ['ArrowLeft', () => step(-1)],
+    ['ArrowRight', () => step(1)],
+    ['r', () => update({ reveal: reveal ? null : '1' })],
+  ]);
+
   useEffect(() => {
     document.title = decisionDate
       ? `Brief ${decisionDate} · GridBricks`
@@ -239,6 +258,10 @@ export function BriefPage() {
           </Stack>
         )}
       </QueryState>
+
+      {brief.data && evolution.data ? (
+        <RevisionPanel brief={brief.data} evolution={evolution.data} />
+      ) : null}
 
       <QueryState query={evolution} loadingHeight={300}>
         {(data, refetching) => (

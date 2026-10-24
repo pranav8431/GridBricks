@@ -18,10 +18,11 @@ around.
 | ![Forecast accuracy page](docs/images/accuracy.png) | ![Day-ahead brief with actual outturn](docs/images/brief-revealed.png) |
 
 The interface is a dark "control room" by default, with a light theme one click away in the
-sidebar. Its identity is deliberate: a left rail with a turbine mark, a single amber signal
-colour for interface state, Space Grotesk display figures, JetBrains Mono for data, a dot-grid
-canvas and a wind-streamline motif. Chart colours are kept separate from that chrome: forecast
-blue, actual orange and corrected aqua, validated for colour-blind readers on both themes.
+sidebar. It uses Apple's San Francisco typeface throughout (Inter, bundled, on other systems), a
+left rail with the GridBricks bar mark, a single amber signal colour for interface state, a
+dot-grid canvas and a wind-streamline motif. Chart colours are kept separate from that chrome:
+forecast blue, actual orange and corrected aqua, validated for colour-blind readers on both
+themes.
 
 ## What the desk gets
 
@@ -29,9 +30,15 @@ blue, actual orange and corrected aqua, validated for colour-blind readers on bo
    had landed before gate closure and what it said for each hourly product. It adds an
    error-adjusted estimate with a P10–P90 likely range, and shows how the forecast evolved
    before and after the decision. A toggle reveals what actually happened.
+   - **Run-to-run revisions.** The run used against the run before it, with the gap shaded, a
+     revision alert when the day moves by 10 GWh or any hour by 1 GW, and an agreement score
+     across the last four runs. These follow features of trading forecast tools such as
+     Meteomatics and AG2 Trader, where a small gap between runs signals a confident forecast.
+   - **Keyboard shortcuts.** ← and → step through days; R reveals or hides the outturn.
 2. **Forecast accuracy.** A backtest of every January decision: error metrics, daily misses,
    error distribution, bias by wind level, accuracy by lead time, and the value of waiting for a
-   later auction compared with correcting the forecast.
+   later auction compared with correcting the forecast. An hour-by-day error heatmap shows when
+   misses cluster, and the daily table downloads as CSV.
 3. **Methodology and data.** Definitions, the calibration method, data provenance with
    checksums, and data-quality findings.
 
@@ -66,7 +73,7 @@ make dev       # API on :8000 and web on :5173, both with hot reload
 **Checks.**
 
 ```bash
-make check     # lint, strict types, 105 backend + 47 frontend tests with coverage gates
+make check     # lint, strict types, 105 backend + 58 frontend tests with coverage gates
 make up        # production container on :8000, then in another shell:
 make e2e       # 14 Playwright tests: smoke, accessibility (axe) and mobile
 ```
@@ -187,7 +194,7 @@ See `.env.example`.
 
 ## Engineering practices
 
-- **Tests.** 166 automated tests across nine kinds; [docs/testing.md](docs/testing.md) explains
+- **Tests.** 177 automated tests across nine kinds; [docs/testing.md](docs/testing.md) explains
   each one.
 
   | Kind | Where | Count |
@@ -198,7 +205,7 @@ See `.env.example`.
   | Contract: frontend's OpenAPI copy equals the served spec | `test_contract.py` | 2 |
   | Golden numbers and snapshot integrity on the real data | `test_snapshot_golden.py`, `test_snapshot_integrity.py` | 12 |
   | Performance budgets per endpoint | `test_performance.py` | 7 |
-  | Frontend unit and component tests with real API fixtures (MSW) | `frontend/src/**/*.test.ts(x)` | 47 |
+  | Frontend unit and component tests with real API fixtures (MSW) | `frontend/src/**/*.test.ts(x)` | 58 |
   | Accessibility: axe WCAG 2.1 AA on every page, dark and light | `frontend/e2e/a11y.spec.ts` | 6 |
   | End to end: smoke and mobile, run against the Docker image in CI | `frontend/e2e/*.spec.ts` | 8 |
 

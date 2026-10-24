@@ -232,3 +232,90 @@ export function evolutionOption(
     ],
   };
 }
+
+export function revisionLegend(t: ChartTokens, brief: BriefResponse): LegendItem[] {
+  const used = brief.decision_run ? ukTime(brief.decision_run) : 'decision';
+  const previous = brief.previous_run ? ukTime(brief.previous_run) : 'previous';
+  return [
+    { label: `${used} run (used)`, color: t.forecast, kind: 'line' },
+    { label: `${previous} run (before it)`, color: t.ink2, kind: 'dashed' },
+    { label: 'Revision between them', color: t.revisionFill, kind: 'area' },
+  ];
+}
+
+/** The decision run against the run before it, with the gap shaded: small gaps mean confidence. */
+export function revisionOption(brief: BriefResponse, t: ChartTokens): ChartOption {
+  const base = baseOption(t);
+  const hours = brief.hours.filter((h) => h.forecast_mw != null && h.previous_forecast_mw != null);
+  const byHour = new Map(hours.map((h) => [ms(h.start_time), h]));
+  const formatter = (params: unknown): string => {
+    const x = (params as { axisValue?: number }[])[0]?.axisValue;
+    const hour = x === undefined ? undefined : byHour.get(Math.floor(x / HOUR) * HOUR);
+    if (x === undefined || !hour) return '';
+    const delta = (hour.forecast_mw ?? 0) - (hour.previous_forecast_mw ?? 0);
+    return tooltipHtml(
+      `${ukDayMonth(x)} ${ukTime(x)}`,
+      [
+        { label: 'Run used', value: gw(hour.forecast_mw), color: t.forecast },
+        {
+          label: 'Run before it',
+          value: gw(hour.previous_forecast_mw),
+          color: t.ink2,
+          dashed: true,
+        },
+        { label: 'Revision', value: `${delta >= 0 ? '+' : '\u2212'}${gw(Math.abs(delta), 2)}` },
+      ],
+      t,
+    );
+  };
+  return {
+    ...base,
+    tooltip: { ...base.tooltip, trigger: 'axis', axisPointer: { type: 'line' }, formatter },
+    xAxis: ukTimeAxis(t, { min: ms(brief.delivery_start), max: ms(brief.delivery_end) }),
+    yAxis: gwValueAxis(t, { scale: true }),
+    series: [
+      {
+        name: 'Lower',
+        type: 'line',
+        stack: 'gap',
+        data: hours.map((h) => [
+          ms(h.start_time),
+          Math.min(h.forecast_mw ?? 0, h.previous_forecast_mw ?? 0),
+        ]),
+        symbol: 'none',
+        lineStyle: { opacity: 0 },
+        silent: true,
+      },
+      {
+        name: 'Revision',
+        type: 'line',
+        stack: 'gap',
+        data: hours.map((h) => [
+          ms(h.start_time),
+          Math.abs((h.forecast_mw ?? 0) - (h.previous_forecast_mw ?? 0)),
+        ]),
+        symbol: 'none',
+        lineStyle: { opacity: 0 },
+        areaStyle: { color: t.revisionFill, opacity: 1 },
+        silent: true,
+      },
+      {
+        name: 'Run before it',
+        type: 'line',
+        data: hours.map((h) => [ms(h.start_time), h.previous_forecast_mw]),
+        symbol: 'none',
+        lineStyle: { color: t.ink2, width: 1.5, type: 'dashed' },
+      },
+      {
+        name: 'Run used',
+        type: 'line',
+        data: hours.map((h) => [ms(h.start_time), h.forecast_mw]),
+        showSymbol: false,
+        symbolSize: 8,
+        lineStyle: { color: t.forecast, width: 2 },
+        itemStyle: { color: t.forecast, borderColor: t.surface, borderWidth: 2 },
+        z: 3,
+      },
+    ],
+  };
+}
