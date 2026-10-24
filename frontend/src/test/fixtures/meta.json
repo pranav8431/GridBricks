@@ -1,85 +1,72 @@
 {
- "app_version": "1.0.0",
- "snapshot": {
-  "version": "a3daecfcd5c5",
-  "generated_at": "2026-10-24T09:24:51Z",
-  "source": "Elexon BMRS Insights API (https://data.elexon.co.uk/bmrs/api/v1)",
-  "datasets": [
-   {
-    "dataset": "FUELHH",
-    "endpoint": "/datasets/FUELHH/stream",
-    "params": {
-     "settlementDateFrom": "2025-12-17",
-     "settlementDateTo": "2026-02-01",
-     "fuelType": "WIND"
-    },
-    "rows": 2256,
-    "sha256": "6fd32c76bb7162500382d3342b6243c7ecc7437ea49d75de473abb4787e62b65"
-   },
-   {
-    "dataset": "WINDFOR",
-    "endpoint": "/datasets/WINDFOR/stream",
-    "params": {
-     "publishDateTimeFrom": "2025-12-15T00:00:00+00:00",
-     "publishDateTimeTo": "2026-02-01T23:00:00+00:00"
-    },
-    "rows": 28616,
-    "sha256": "ed7d8e0314484782b21c552641f6fc5f9f7438fb7675f28812be053acac0c7c9"
-   }
-  ]
- },
- "first_decision_date": "2026-01-01",
- "last_decision_date": "2026-01-31",
- "first_delivery_date": "2026-01-02",
- "last_delivery_date": "2026-02-01",
- "calibration_from": "2025-12-18",
- "gates": [
-  {
-   "id": "epex_hourly",
-   "label": "EPEX hourly \u00b7 09:20",
-   "venue": "EPEX SPOT",
-   "gate_closure_uk": "09:20",
-   "is_custom": false,
-   "description": "EPEX SPOT GB 60-minute day-ahead auction"
+  "app_version": "1.0.0",
+  "snapshot": {
+    "version": "a3daecfcd5c5",
+    "generated_at": "2026-10-24T09:24:51Z",
+    "source": "Elexon BMRS Insights API (https://data.elexon.co.uk/bmrs/api/v1)",
+    "datasets": [
+      {
+        "dataset": "FUELHH",
+        "endpoint": "/datasets/FUELHH/stream",
+        "params": {
+          "settlementDateFrom": "2025-12-17",
+          "settlementDateTo": "2026-02-01",
+          "fuelType": "WIND"
+        },
+        "rows": 2256,
+        "sha256": "6fd32c76bb7162500382d3342b6243c7ecc7437ea49d75de473abb4787e62b65"
+      },
+      {
+        "dataset": "WINDFOR",
+        "endpoint": "/datasets/WINDFOR/stream",
+        "params": {
+          "publishDateTimeFrom": "2025-12-15T00:00:00+00:00",
+          "publishDateTimeTo": "2026-02-01T23:00:00+00:00"
+        },
+        "rows": 28616,
+        "sha256": "ed7d8e0314484782b21c552641f6fc5f9f7438fb7675f28812be053acac0c7c9"
+      }
+    ]
   },
-  {
-   "id": "n2ex",
-   "label": "N2EX \u00b7 09:50",
-   "venue": "Nord Pool",
-   "gate_closure_uk": "09:50",
-   "is_custom": false,
-   "description": "Nord Pool N2EX GB day-ahead auction"
+  "first_decision_date": "2026-01-01",
+  "last_decision_date": "2026-01-31",
+  "first_delivery_date": "2026-01-02",
+  "last_delivery_date": "2026-02-01",
+  "calibration_from": "2025-12-18",
+  "gates": [
+    {
+      "id": "epex_hourly",
+      "label": "EPEX hourly \u00b7 09:20",
+      "venue": "EPEX SPOT",
+      "gate_closure_uk": "09:20",
+      "is_custom": false,
+      "description": "EPEX SPOT GB 60-minute day-ahead auction"
+    },
+    {
+      "id": "n2ex",
+      "label": "N2EX \u00b7 09:50",
+      "venue": "Nord Pool",
+      "gate_closure_uk": "09:50",
+      "is_custom": false,
+      "description": "Nord Pool N2EX GB day-ahead auction"
+    },
+    {
+      "id": "epex_halfhourly",
+      "label": "EPEX half-hourly \u00b7 15:30",
+      "venue": "EPEX SPOT",
+      "gate_closure_uk": "15:30",
+      "is_custom": false,
+      "description": "EPEX SPOT GB 30-minute day-ahead auction"
+    }
+  ],
+  "default_gate": "epex_hourly",
+  "run_schedule_utc": ["02:30", "04:30", "07:30", "09:30", "11:30", "15:30", "18:30", "22:30"],
+  "calibration": {
+    "method": "walk-forward linear correction",
+    "window_days": 14,
+    "min_samples": 48,
+    "quantiles": [0.1, 0.5, 0.9]
   },
-  {
-   "id": "epex_halfhourly",
-   "label": "EPEX half-hourly \u00b7 15:30",
-   "venue": "EPEX SPOT",
-   "gate_closure_uk": "15:30",
-   "is_custom": false,
-   "description": "EPEX SPOT GB 30-minute day-ahead auction"
-  }
- ],
- "default_gate": "epex_hourly",
- "run_schedule_utc": [
-  "02:30",
-  "04:30",
-  "07:30",
-  "09:30",
-  "11:30",
-  "15:30",
-  "18:30",
-  "22:30"
- ],
- "calibration": {
-  "method": "walk-forward linear correction",
-  "window_days": 14,
-  "min_samples": 48,
-  "quantiles": [
-   0.1,
-   0.5,
-   0.9
-  ]
- },
- "delivery_window_rule": "Hourly products from 23:00 on D-1 to 23:00 on D, UK time",
- "timezone": "Europe/London"
+  "delivery_window_rule": "Hourly products from 23:00 on D-1 to 23:00 on D, UK time",
+  "timezone": "Europe/London"
 }
