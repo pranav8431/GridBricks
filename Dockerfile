@@ -3,7 +3,7 @@
 # The same image runs locally (docker compose), in CI, and on any container host.
 
 # ---- 1. Build the React app ---------------------------------------------------
-FROM node:24-slim AS web
+FROM node:25-slim AS web
 WORKDIR /web
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci --no-audit --no-fund
