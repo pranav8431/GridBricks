@@ -24,12 +24,32 @@ dot-grid canvas and a wind-streamline motif. Chart colours are kept separate fro
 forecast blue, actual orange and corrected aqua, validated for colour-blind readers on both
 themes.
 
+## Assignment checklist
+
+| Requirement from the brief | Where it is met |
+|---|---|
+| Show the latest renewable forecast available when the day-ahead purchase decision is made | Day-ahead brief: newest WINDFOR run strictly before the chosen auction's gate closure on D-1, with a run timeline, for EPEX 09:20, N2EX 09:50, EPEX 15:30 or any custom time |
+| Evaluate forecast accuracy quantitatively, so decisions can account for the error | Forecast accuracy page (MAE, RMSE, bias, percentiles, lead time, wind level, daily energy error) and a walk-forward P10–P90 range on every brief |
+| Understand how much power to procure beyond renewables | Procurement planner on the brief |
+| National wind only: FUELHH `fuelType=WIND` actuals and WINDFOR forecasts | `backend/src/gridbricks/elexon/`, snapshot in `backend/data/snapshot/` |
+| Data for purchase decisions made in January 2026 | Decision days 1–31 Jan 2026 (delivery 2 Jan to 1 Feb); late December used only to calibrate early-January ranges |
+| React frontend, Python backend | `frontend/` (React 19, TypeScript), `backend/` (FastAPI, Python 3.12) |
+| Docker | `Dockerfile`, `docker-compose.yml`; CI runs the browser tests against the image |
+| Deployed on Vercel or Heroku | Vercel config in `vercel.json` and `api/index.py`; live link at the top of this README |
+| README with files and directories, how to start, app link | [Repository layout](#repository-layout), [Quick start](#quick-start), links table above |
+| AI tools mentioned | [Use of AI tools](#use-of-ai-tools) |
+
 ## What the desk gets
 
 1. **Day-ahead brief.** Pick a decision day and an auction. The brief shows which forecast run
    had landed before gate closure and what it said for each hourly product. It adds an
    error-adjusted estimate with a P10–P90 likely range, and shows how the forecast evolved
    before and after the decision. A toggle reveals what actually happened.
+   - **Procurement planner.** Turns the wind outlook into the decision itself: enter a demand
+     assumption and choose to plan on the published forecast, the corrected estimate or the
+     low-wind (P10) case. It shows the volume to buy per hourly product, the peak purchase, the
+     extra volume a low-wind day would need, and how far the published forecast would have
+     under-bought. Demand is the user's input; the pilot uses no data beyond Elexon wind.
    - **Run-to-run revisions.** The run used against the run before it, with the gap shaded, a
      revision alert when the day moves by 10 GWh or any hour by 1 GW, and an agreement score
      across the last four runs. These follow features of trading forecast tools such as
@@ -73,7 +93,7 @@ make dev       # API on :8000 and web on :5173, both with hot reload
 **Checks.**
 
 ```bash
-make check     # lint, strict types, 105 backend + 58 frontend tests with coverage gates
+make check     # lint, strict types, 105 backend + 64 frontend tests with coverage gates
 make up        # production container on :8000, then in another shell:
 make e2e       # 14 Playwright tests: smoke, accessibility (axe) and mobile
 ```
@@ -194,7 +214,7 @@ See `.env.example`.
 
 ## Engineering practices
 
-- **Tests.** 177 automated tests across nine kinds; [docs/testing.md](docs/testing.md) explains
+- **Tests.** 183 automated tests across nine kinds; [docs/testing.md](docs/testing.md) explains
   each one.
 
   | Kind | Where | Count |
@@ -205,7 +225,7 @@ See `.env.example`.
   | Contract: frontend's OpenAPI copy equals the served spec | `test_contract.py` | 2 |
   | Golden numbers and snapshot integrity on the real data | `test_snapshot_golden.py`, `test_snapshot_integrity.py` | 12 |
   | Performance budgets per endpoint | `test_performance.py` | 7 |
-  | Frontend unit and component tests with real API fixtures (MSW) | `frontend/src/**/*.test.ts(x)` | 58 |
+  | Frontend unit and component tests with real API fixtures (MSW) | `frontend/src/**/*.test.ts(x)` | 64 |
   | Accessibility: axe WCAG 2.1 AA on every page, dark and light | `frontend/e2e/a11y.spec.ts` | 6 |
   | End to end: smoke and mobile, run against the Docker image in CI | `frontend/e2e/*.spec.ts` | 8 |
 

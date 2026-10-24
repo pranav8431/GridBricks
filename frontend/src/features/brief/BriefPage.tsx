@@ -33,6 +33,7 @@ import { deliveryLegend, evolutionLegend } from './chartOptions';
 import { DeliveryChart } from './DeliveryChart';
 import { EvolutionChart } from './EvolutionChart';
 import { HourlyTable } from './HourlyTable';
+import { ProcurementPlanner } from './ProcurementPlanner';
 import { RevisionPanel } from './RevisionPanel';
 
 function DecisionControls({
@@ -232,6 +233,7 @@ export function BriefPage() {
           <Stack gap="lg" className={refetching ? 'gb-refetching' : undefined}>
             <DecisionHero brief={data} reveal={reveal} />
             <BriefKpis brief={data} reveal={reveal} />
+            <ProcurementPlanner brief={data} />
             <ChartCard
               title="Delivery day: hourly wind forecast"
               subtitle="National wind (MW, average per hour). The shaded range shows where wind is likely to land, given recent forecast errors."

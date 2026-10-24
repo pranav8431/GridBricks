@@ -88,4 +88,13 @@ describe('BriefPage', () => {
     expect(screen.getByText('Stable since last run')).toBeInTheDocument();
     expect(screen.getByTestId('revision-facts')).toHaveTextContent('Revision over the day');
   });
+
+  it('the procurement planner turns wind into a volume to buy and follows the URL', async () => {
+    const user = userEvent.setup();
+    renderBrief();
+    expect(await screen.findByText('Procurement planner')).toBeInTheDocument();
+    expect(screen.getByTestId('procurement-facts')).toHaveTextContent('Volume to buy');
+    await user.click(screen.getByText('Low-wind case (P10)'));
+    expect(screen.getByTestId('location')).toHaveTextContent('plan=cautious');
+  });
 });

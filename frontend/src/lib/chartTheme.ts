@@ -24,6 +24,7 @@ export interface ChartTokens {
   divergingHigh: string;
   windowFill: string;
   revisionFill: string;
+  procurement: string;
 }
 
 export const LIGHT: ChartTokens = {
@@ -44,6 +45,7 @@ export const LIGHT: ChartTokens = {
   divergingHigh: '#e34948',
   windowFill: 'rgba(12,22,33,0.05)',
   revisionFill: 'rgba(42,120,214,0.18)',
+  procurement: '#6250d6',
 };
 
 export const DARK: ChartTokens = {
@@ -64,6 +66,7 @@ export const DARK: ChartTokens = {
   divergingHigh: '#e66767',
   windowFill: 'rgba(255,255,255,0.05)',
   revisionFill: 'rgba(57,135,229,0.26)',
+  procurement: '#9085e9',
 };
 
 export function useChartTokens(): ChartTokens {
