@@ -96,11 +96,11 @@ function Calibration({ meta }: { meta: MetaResponse }) {
   return (
     <Section title="The error-adjusted estimate and likely range">
       <Text size="sm">
-        For each delivery day D, the app looks at the {c.window_days} most recent delivery days that
-        were fully settled before the decision: D−{c.gap_days + c.window_days - 1} to D−
-        {c.gap_days}. For every hour in those days it takes the ratio of actual to forecast wind.
-        The {c.quantiles.map((q) => `P${String(Math.round(q * 100))}`).join(', ')} of that ratio
-        scale today&apos;s forecast into a central estimate and a likely range.
+        For each decision, the app takes every hour of the last {c.window_days} days whose outturn
+        had already been published at the decision time, with the forecast that was used for it. It
+        fits a straight line, actual ≈ a + b × forecast, to those hours. The line gives the
+        corrected central estimate (P50). The 10th and 90th percentiles of the misses around the
+        line give the likely range (P10 to P90).
       </Text>
       <List spacing={6} size="sm">
         <List.Item>
@@ -108,9 +108,13 @@ function Calibration({ meta }: { meta: MetaResponse }) {
           automated test scrambles every later value and checks the estimate does not move.
         </List.Item>
         <List.Item>
-          <b>Why a ratio.</b> Errors in GB wind grow with output, so a multiplicative range fits
-          better than a fixed number of MW. A fixed offset was also tested and gave a weaker central
-          estimate.
+          <b>Why a line.</b> The over-forecast grows with wind level, so the slope b is below one
+          (about 0.7 in January). In the backtest the line halved the daily energy error, from 43 to
+          22 GWh, beating ratio, rolling-bias and recency-weighted alternatives.
+        </List.Item>
+        <List.Item>
+          <b>Freshest data.</b> Hours of the previous day that settled before the morning gate are
+          used too, so the correction adapts within a day.
         </List.Item>
         <List.Item>
           <b>Warm-up.</b> Early-January decisions are calibrated with delivery days from{' '}

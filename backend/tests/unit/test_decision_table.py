@@ -28,7 +28,7 @@ from gridbricks.services.decision_table import (
 )
 
 DAYS = [date(2026, 1, d) for d in range(17, 24)]
-CONFIG = CalibrationConfig(window_days=3, gap_days=2, min_samples=24)
+CONFIG = CalibrationConfig(window_days=3, min_samples=24)
 DECISION_COLUMNS = [
     PUBLISH_TIME,
     FORECAST_MW,

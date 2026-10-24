@@ -13,7 +13,7 @@ from datetime import date, time
 import numpy as np
 import pandas as pd
 
-from gridbricks.domain.calibration import CalibrationConfig, RatioBand, walk_forward_bands
+from gridbricks.domain.calibration import CalibrationConfig, LinearBand, walk_forward_bands
 from gridbricks.domain.frames import PUBLISH_TIME, START_TIME, to_utc
 from gridbricks.domain.market import decision_cutoff, delivery_hours
 from gridbricks.domain.selection import CUTOFF, FORECAST_MW, latest_before
@@ -23,6 +23,7 @@ PREVIOUS_PUBLISH_TIME = "previous_publish_time"
 PREVIOUS_FORECAST_MW = "previous_forecast_mw"
 HORIZON_H = "horizon_h"
 ACTUAL_MW = "actual_mw"
+ACTUAL_PUBLISHED = "actual_published"
 ERROR_MW = "error_mw"
 P10_MW, P50_MW, P90_MW = "p10_mw", "p50_mw", "p90_mw"
 
@@ -31,7 +32,7 @@ P10_MW, P50_MW, P90_MW = "p10_mw", "p50_mw", "p90_mw"
 class DecisionTable:
     gate_closure: time
     frame: pd.DataFrame
-    bands: dict[date, RatioBand | None]
+    bands: dict[date, LinearBand | None]
 
     def rows_for(self, delivery_dates: Sequence[date]) -> pd.DataFrame:
         wanted = set(delivery_dates)
@@ -67,12 +68,21 @@ def build_decision_table(
     table[PREVIOUS_FORECAST_MW] = previous[PREVIOUS_FORECAST_MW].to_numpy()
     table[HORIZON_H] = (table[START_TIME] - table[PUBLISH_TIME]).dt.total_seconds() / 3600.0
     table[ACTUAL_MW] = table[START_TIME].map(data.actual_by_start).astype("float64")
+    published = data.actuals.set_index(START_TIME)[PUBLISH_TIME]
+    table[ACTUAL_PUBLISHED] = table[START_TIME].map(published)
     table[ERROR_MW] = table[FORECAST_MW] - table[ACTUAL_MW]
 
-    bands = walk_forward_bands(table, delivery_dates, calibration)
-    for column, attribute in ((P10_MW, "p10"), (P50_MW, "p50"), (P90_MW, "p90")):
-        ratio = table[DELIVERY_DATE].map(
-            lambda day, attr=attribute: getattr(bands[day], attr) if bands[day] else np.nan
-        )
-        table[column] = table[FORECAST_MW] * ratio.astype("float64")
+    cutoffs = {day: decision_cutoff(day, gate_closure) for day in delivery_dates}
+    bands = walk_forward_bands(table, cutoffs, calibration)
+    for column in (P10_MW, P50_MW, P90_MW):
+        table[column] = np.nan
+    forecast = table[FORECAST_MW].to_numpy(dtype=np.float64)
+    for day, band in bands.items():
+        if band is None:
+            continue
+        rows = (table[DELIVERY_DATE] == day).to_numpy()
+        p10, p50, p90 = band.apply(forecast[rows])
+        table.loc[rows, P10_MW] = p10
+        table.loc[rows, P50_MW] = p50
+        table.loc[rows, P90_MW] = p90
     return DecisionTable(gate_closure=gate_closure, frame=table, bands=bands)

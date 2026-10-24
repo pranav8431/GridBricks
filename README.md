@@ -31,8 +31,10 @@ The January 2026 backtest at the 09:20 EPEX gate (744 hourly products):
 |---|---|
 | Mean absolute error | 2.02 GW |
 | Bias (forecast − actual) | +1.75 GW, a systematic over-forecast that leaves the desk short |
-| Mean absolute error after the walk-forward correction | 1.41 GW (−30%) |
-| Actual hours inside the P10–P90 range | 82.5% (target 80%) |
+| Daily energy error, published forecast | 43.3 GWh |
+| Daily energy error after the walk-forward correction | 22.4 GWh (−48%) |
+| Mean absolute error after the correction | 1.24 GW (−39%) |
+| Actual hours inside the P10–P90 range | 80.1% (target 80%) |
 | Gain from waiting until the 15:30 auction | −7% error |
 
 ## Quick start
@@ -54,7 +56,7 @@ make dev       # API on :8000 and web on :5173, both with hot reload
 **Checks.**
 
 ```bash
-make check     # lint, strict type checks, 91 backend + 26 frontend tests
+make check     # lint, strict type checks, 92 backend + 26 frontend tests
 make up        # production container on :8000, then in another shell:
 make e2e       # Playwright browser smoke tests against it
 ```
@@ -123,10 +125,12 @@ trade-offs.
   decision time. Stale values that a run repeats for past hours are discarded.
 - **Error** is forecast minus actual, using FUELHH `WIND` outturn. Positive means over-forecast,
   so the desk would be short.
-- **Error-adjusted range.** For each delivery day, the P10, P50 and P90 of actual ÷ forecast are
-  learned from the 14 most recent days fully settled before the decision (D−15 to D−2). Late
+- **Corrected estimate and range.** For each decision, a line actual ≈ a + b × forecast is fitted
+  to every hour of the last 14 days whose outturn was already published at the decision time.
+  It gives the corrected estimate, and its residual percentiles give the P10–P90 range. Late
   December 2025 is used as warm-up for early-January decisions. A leakage test proves no later
-  information is used.
+  information is used, and [ADR-0006](docs/adr/0006-linear-walk-forward-correction.md) compares
+  the alternatives.
 
 The full write-up is in [docs/methodology.md](docs/methodology.md).
 
@@ -173,7 +177,7 @@ See `.env.example`.
 ## Engineering practices
 
 - **Tests.**
-  - 91 backend tests at 95% coverage. They include a property-based test of forecast selection,
+  - 92 backend tests at 94% coverage. They include a property-based test of forecast selection,
     a leakage test that scrambles all post-decision data, and golden tests that pin the January
     headline numbers.
   - 26 frontend tests that use real API fixtures.

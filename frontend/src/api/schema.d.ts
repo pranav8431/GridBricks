@@ -294,16 +294,30 @@ export interface components {
             sufficient: boolean;
             /** Samples */
             samples: number;
-            /** Window Start */
+            /**
+             * Window Start
+             * @description Start of the settled-hours training window.
+             */
             window_start: string | null;
-            /** Window End */
+            /**
+             * Window End
+             * @description End of the window: the decision cutoff.
+             */
             window_end: string | null;
-            /** Ratio P10 */
-            ratio_p10: number | null;
-            /** Ratio P50 */
-            ratio_p50: number | null;
-            /** Ratio P90 */
-            ratio_p90: number | null;
+            /**
+             * Intercept Mw
+             * @description a in actual ≈ a + b × forecast.
+             */
+            intercept_mw: number | null;
+            /**
+             * Slope
+             * @description b in actual ≈ a + b × forecast.
+             */
+            slope: number | null;
+            /** Residual P10 Mw */
+            residual_p10_mw: number | null;
+            /** Residual P90 Mw */
+            residual_p90_mw: number | null;
         };
         /** CalibrationSettings */
         CalibrationSettings: {
@@ -311,8 +325,6 @@ export interface components {
             method: string;
             /** Window Days */
             window_days: number;
-            /** Gap Days */
-            gap_days: number;
             /** Min Samples */
             min_samples: number;
             /** Quantiles */

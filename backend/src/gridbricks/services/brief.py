@@ -67,9 +67,10 @@ def _calibration_info(table: DecisionTable, delivery: date) -> CalibrationInfo:
             samples=0,
             window_start=None,
             window_end=None,
-            ratio_p10=None,
-            ratio_p50=None,
-            ratio_p90=None,
+            intercept_mw=None,
+            slope=None,
+            residual_p10_mw=None,
+            residual_p90_mw=None,
         )
     return CalibrationInfo(
         method=METHOD,
@@ -77,9 +78,10 @@ def _calibration_info(table: DecisionTable, delivery: date) -> CalibrationInfo:
         samples=band.samples,
         window_start=band.window_start,
         window_end=band.window_end,
-        ratio_p10=band.p10,
-        ratio_p50=band.p50,
-        ratio_p90=band.p90,
+        intercept_mw=band.intercept,
+        slope=band.slope,
+        residual_p10_mw=band.residual_p10,
+        residual_p90_mw=band.residual_p90,
     )
 
 

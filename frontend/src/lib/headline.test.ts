@@ -7,7 +7,7 @@ describe('brief headline', () => {
     expect(text).toContain('At 09:20 on Wed 14 Jan, the newest forecast was the 07:30 run');
     expect(text).toContain('published 1 h 50 min earlier');
     expect(text).toContain('286 GWh');
-    expect(text).toMatch(/expect about 251 GWh, most likely between 195 GWh and 317 GWh/);
+    expect(text).toMatch(/expect about 253 GWh, most likely between 193 GWh and 295 GWh/);
   });
 
   it('explains when no run was available', () => {

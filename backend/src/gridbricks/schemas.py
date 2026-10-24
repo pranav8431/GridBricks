@@ -73,11 +73,12 @@ class CalibrationInfo(APIModel):
     method: str
     sufficient: bool
     samples: int
-    window_start: date | None
-    window_end: date | None
-    ratio_p10: float | None
-    ratio_p50: float | None
-    ratio_p90: float | None
+    window_start: datetime | None = Field(description="Start of the settled-hours training window.")
+    window_end: datetime | None = Field(description="End of the window: the decision cutoff.")
+    intercept_mw: float | None = Field(description="a in actual ≈ a + b × forecast.")
+    slope: float | None = Field(description="b in actual ≈ a + b × forecast.")
+    residual_p10_mw: float | None
+    residual_p90_mw: float | None
 
 
 class DayMetrics(APIModel):
@@ -281,7 +282,6 @@ class SnapshotInfo(APIModel):
 class CalibrationSettings(APIModel):
     method: str
     window_days: int
-    gap_days: int
     min_samples: int
     quantiles: list[float]
 

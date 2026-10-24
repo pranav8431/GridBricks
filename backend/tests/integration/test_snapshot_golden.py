@@ -25,9 +25,19 @@ def test_headline_accuracy_at_0920(snapshot_desk: DeskService) -> None:
     assert result.published.rmse_mw == pytest.approx(2491, abs=2)
     assert result.published.bias_mw == pytest.approx(1747, abs=2)
     assert result.adjusted is not None
-    assert result.adjusted.mae_mw == pytest.approx(1411, abs=2)
-    assert result.band_coverage == pytest.approx(0.825, abs=0.005)
+    assert result.adjusted.mae_mw == pytest.approx(1236, abs=2)
+    assert result.band_coverage == pytest.approx(0.801, abs=0.005)
     assert result.worst_days[0].delivery_date == date(2026, 1, 28)
+
+
+def test_correction_halves_the_daily_energy_error(snapshot_desk: DeskService) -> None:
+    days = [
+        d for d in snapshot_desk.accuracy(EPEX).daily if d.adjusted_energy_error_gwh is not None
+    ]
+    published = sum(abs(d.energy_error_gwh or 0) for d in days) / len(days)
+    corrected = sum(abs(d.adjusted_energy_error_gwh or 0) for d in days) / len(days)
+    assert published == pytest.approx(43.3, abs=0.2)
+    assert corrected == pytest.approx(22.4, abs=0.2)
 
 
 def test_waiting_for_later_runs_helps_less_than_correcting_bias(snapshot_desk: DeskService) -> None:

@@ -33,7 +33,6 @@ class Settings(BaseSettings):
     last_decision_date: date = date(2026, 1, 31)
 
     calibration_window_days: int = Field(default=14, ge=1, le=90)
-    calibration_gap_days: int = Field(default=2, ge=2, le=14)
     calibration_min_samples: int = Field(default=48, ge=1)
 
     # Browser and CDN caching of API responses. The data is immutable within a deployment.
@@ -54,7 +53,6 @@ class Settings(BaseSettings):
     def calibration(self) -> CalibrationConfig:
         return CalibrationConfig(
             window_days=self.calibration_window_days,
-            gap_days=self.calibration_gap_days,
             min_samples=self.calibration_min_samples,
         )
 
@@ -69,7 +67,7 @@ class Settings(BaseSettings):
     @property
     def warmup_start_date(self) -> date:
         """Earliest delivery day whose errors calibrate the first in-scope decision."""
-        return self.calibration.window_for(self.first_delivery_date)[0]
+        return self.first_delivery_date - timedelta(days=self.calibration_window_days + 1)
 
 
 @lru_cache

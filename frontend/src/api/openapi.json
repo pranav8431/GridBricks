@@ -928,27 +928,29 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "date"
+                "format": "date-time"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Window Start"
+            "title": "Window Start",
+            "description": "Start of the settled-hours training window."
           },
           "window_end": {
             "anyOf": [
               {
                 "type": "string",
-                "format": "date"
+                "format": "date-time"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Window End"
+            "title": "Window End",
+            "description": "End of the window: the decision cutoff."
           },
-          "ratio_p10": {
+          "intercept_mw": {
             "anyOf": [
               {
                 "type": "number"
@@ -957,9 +959,10 @@
                 "type": "null"
               }
             ],
-            "title": "Ratio P10"
+            "title": "Intercept Mw",
+            "description": "a in actual \u2248 a + b \u00d7 forecast."
           },
-          "ratio_p50": {
+          "slope": {
             "anyOf": [
               {
                 "type": "number"
@@ -968,9 +971,10 @@
                 "type": "null"
               }
             ],
-            "title": "Ratio P50"
+            "title": "Slope",
+            "description": "b in actual \u2248 a + b \u00d7 forecast."
           },
-          "ratio_p90": {
+          "residual_p10_mw": {
             "anyOf": [
               {
                 "type": "number"
@@ -979,7 +983,18 @@
                 "type": "null"
               }
             ],
-            "title": "Ratio P90"
+            "title": "Residual P10 Mw"
+          },
+          "residual_p90_mw": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Residual P90 Mw"
           }
         },
         "type": "object",
@@ -989,9 +1004,10 @@
           "samples",
           "window_start",
           "window_end",
-          "ratio_p10",
-          "ratio_p50",
-          "ratio_p90"
+          "intercept_mw",
+          "slope",
+          "residual_p10_mw",
+          "residual_p90_mw"
         ],
         "title": "CalibrationInfo"
       },
@@ -1004,10 +1020,6 @@
           "window_days": {
             "type": "integer",
             "title": "Window Days"
-          },
-          "gap_days": {
-            "type": "integer",
-            "title": "Gap Days"
           },
           "min_samples": {
             "type": "integer",
@@ -1025,7 +1037,6 @@
         "required": [
           "method",
           "window_days",
-          "gap_days",
           "min_samples",
           "quantiles"
         ],
