@@ -7,7 +7,7 @@ around.
 
 | | |
 |---|---|
-| **Live app** | `TODO: add the Vercel URL after deployment` |
+| **Live app** | [gridbricks.vercel.app](https://gridbricks.vercel.app) |
 | **Video walkthrough** | `TODO: add the unlisted YouTube link` |
 | **API reference** | `/api/docs` on any running instance (OpenAPI) |
 
