@@ -1,0 +1,28 @@
+# Install once with `uvx pre-commit install`; hooks then run on every commit.
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: check-added-large-files
+        args: ["--maxkb=600"]
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.2
+    hooks:
+      - id: ruff-check
+        args: ["--fix"]
+        files: ^backend/
+      - id: ruff-format
+        files: ^backend/
+  - repo: local
+    hooks:
+      - id: frontend-lint
+        name: eslint + prettier (frontend)
+        entry: bash -c 'cd frontend && npm run lint --silent && npm run format:check --silent'
+        language: system
+        files: ^frontend/
+        pass_filenames: false
