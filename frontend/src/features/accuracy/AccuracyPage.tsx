@@ -1,4 +1,4 @@
-import { Alert, Card, Group, SimpleGrid, Stack, Text, Title } from '@mantine/core';
+import { Alert, Box, Card, Group, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { IconBulb } from '@tabler/icons-react';
 import { useEffect, useMemo } from 'react';
@@ -10,7 +10,7 @@ import { ChartCard } from '../../components/ChartCard';
 import { EChart } from '../../components/EChart';
 import { ErrorCard, LoadingCard, QueryState } from '../../components/QueryState';
 import { useChartTokens } from '../../lib/chartTheme';
-import { addDays, calendarDate, gwh, signedGw } from '../../lib/format';
+import { addDays, calendarDate, gw, gwh, pct, signedGw } from '../../lib/format';
 import { gateQueryString, parseDate, useGateSelection, useUrlState } from '../../lib/params';
 import { AccuracyKpis } from './AccuracyKpis';
 import {
@@ -66,6 +66,51 @@ function Findings({ accuracy }: { accuracy: AccuracyResponse }) {
   );
 }
 
+/** The month in one sentence and three numbers, before any detail. */
+function AccuracyBanner({ accuracy }: { accuracy: AccuracyResponse }) {
+  const days = accuracy.daily.filter((d) => d.actual_gwh != null);
+  const forecast = days.reduce((sum, d) => sum + d.forecast_gwh, 0);
+  const actual = days.reduce((sum, d) => sum + (d.actual_gwh ?? 0), 0);
+  const over = days.filter((d) => (d.energy_error_gwh ?? 0) > 0).length;
+  const share = actual > 0 ? (forecast - actual) / actual : 0;
+  const stats = [
+    { value: `${over} of ${days.length}`, label: 'delivery days over-forecast' },
+    {
+      value: accuracy.adjusted
+        ? `\u2212${pct(1 - accuracy.adjusted.mae_mw / accuracy.published.mae_mw)}`
+        : gw(accuracy.published.mae_mw),
+      label: `average hourly error after correction (${gw(accuracy.published.mae_mw, 2)} to ${gw(accuracy.adjusted?.mae_mw, 2)})`,
+    },
+    { value: pct(accuracy.band_coverage, 1), label: 'of hours inside the likely range' },
+  ];
+  return (
+    <Card padding="xl" className="gb-banner">
+      <SimpleGrid cols={{ base: 1, md: 2 }} spacing={40}>
+        <Box>
+          <Text className="gb-eyebrow" c="#7fb2ee">
+            The month in one line
+          </Text>
+          <Title order={2} fz={28} lh={1.25} mt={6} c="#ffffff">
+            {share >= 0
+              ? `The forecast you could trade on overstated wind by ${pct(share)}: ${gwh(forecast - actual)} that never arrived.`
+              : `The forecast you could trade on understated wind by ${pct(-share)}.`}
+          </Title>
+        </Box>
+        <SimpleGrid cols={{ base: 1, xs: 3 }} spacing="lg">
+          {stats.map((stat) => (
+            <Box key={stat.label}>
+              <div className="gb-banner-stat">{stat.value}</div>
+              <Text size="sm" mt={4} className="gb-banner-muted">
+                {stat.label}
+              </Text>
+            </Box>
+          ))}
+        </SimpleGrid>
+      </SimpleGrid>
+    </Card>
+  );
+}
+
 interface AccuracyContentProps {
   data: AccuracyResponse;
   refetching: boolean;
@@ -97,6 +142,7 @@ function AccuracyContent({
 
   return (
     <Stack gap="lg" className={refetching ? 'gb-refetching' : undefined}>
+      <AccuracyBanner accuracy={data} />
       <AccuracyKpis accuracy={data} />
       <Findings accuracy={data} />
 
@@ -244,7 +290,8 @@ export function AccuracyPage() {
     <Stack gap="lg">
       <Group justify="space-between" align="flex-end" wrap="wrap" gap="md">
         <div>
-          <Title order={1} fz="h2">
+          <Text className="gb-eyebrow">January 2026 backtest</Text>
+          <Title order={1} fz={30} mt={4}>
             Forecast accuracy at decision time
           </Title>
           <Text c="var(--gb-ink-2)" size="sm" maw={760}>

@@ -1,3 +1,4 @@
+import '@fontsource-variable/inter';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import 'dayjs/locale/en-gb';

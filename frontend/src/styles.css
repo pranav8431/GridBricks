@@ -55,38 +55,163 @@ body {
 .gb-card {
   background: var(--gb-surface);
   border-color: var(--gb-border);
+  box-shadow:
+    0 1px 2px rgba(16, 24, 40, 0.04),
+    0 4px 16px rgba(16, 24, 40, 0.05);
+}
+
+[data-mantine-color-scheme='dark'] .gb-card {
+  box-shadow: none;
+}
+
+/* Page heading block */
+.gb-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gb-forecast);
+}
+
+/* Hero figure: the one number a view leads with */
+.gb-hero-value {
+  font-size: clamp(44px, 6vw, 64px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--gb-ink);
+}
+
+.gb-hero-unit {
+  font-size: 0.45em;
+  font-weight: 600;
+  margin-left: 6px;
+  color: var(--gb-ink-2);
+  letter-spacing: 0;
+}
+
+/* Icon badge on stat tiles */
+.gb-icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  flex: none;
+}
+
+/* Insight banner */
+.gb-banner {
+  background: linear-gradient(135deg, #12202f 0%, #1c3550 100%);
+  color: #f0efec;
+  border: none;
+}
+
+.gb-banner .gb-banner-muted {
+  color: #b8c7d6;
+}
+
+.gb-banner-stat {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #ffffff;
+}
+
+/* Range bar: published forecast, corrected estimate, likely range and actual on one scale */
+.gb-range {
+  position: relative;
+  height: 44px;
+  margin: 8px 0 4px;
+}
+
+.gb-range-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 18px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--gb-grid);
+}
+
+.gb-range-band {
+  position: absolute;
+  top: 12px;
+  height: 20px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--gb-adjusted) 28%, transparent);
+  border: 1px solid color-mix(in srgb, var(--gb-adjusted) 60%, transparent);
+}
+
+.gb-range-marker {
+  position: absolute;
+  top: 6px;
+  width: 4px;
+  height: 32px;
+  margin-left: -2px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 2px var(--gb-surface);
+}
+
+.gb-range-scale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--gb-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.gb-key {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  margin-right: 6px;
+  vertical-align: baseline;
 }
 
 .gb-header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: color-mix(in srgb, var(--gb-surface) 92%, transparent);
-  backdrop-filter: saturate(1.4) blur(8px);
-  border-bottom: 1px solid var(--gb-border);
+  background: #12202f;
+  color: #f0efec;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06),
+    0 8px 24px rgba(10, 20, 35, 0.18);
+}
+
+.gb-header-sub {
+  color: #9fb3c8;
 }
 
 .gb-nav-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  color: var(--gb-ink-2);
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  color: #c9d6e3;
   font-size: 14px;
   font-weight: 500;
   text-decoration: none;
   white-space: nowrap;
+  transition:
+    background 120ms ease,
+    color 120ms ease;
 }
 
 .gb-nav-link:hover {
-  background: var(--gb-border);
-  color: var(--gb-ink);
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
 }
 
 .gb-nav-link[aria-current='page'] {
-  background: color-mix(in srgb, var(--gb-forecast) 14%, transparent);
-  color: var(--gb-ink);
+  background: #ffffff;
+  color: #12202f;
+  font-weight: 600;
 }
 
 .gb-nav-link:focus-visible,

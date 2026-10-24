@@ -1,4 +1,12 @@
 import { SimpleGrid } from '@mantine/core';
+import {
+  IconArrowsDiff,
+  IconChartBar,
+  IconPercentage,
+  IconRuler2,
+  IconScale,
+  IconTarget,
+} from '@tabler/icons-react';
 
 import type { AccuracyResponse } from '../../api/client';
 import { StatTile } from '../../components/StatTile';
@@ -13,9 +21,10 @@ export function AccuracyKpis({ accuracy }: { accuracy: AccuracyResponse }) {
       ? 'Forecast too high on average: the desk would be short'
       : 'Forecast too low on average: the desk would be long';
   return (
-    <SimpleGrid cols={{ base: 1, xs: 2, md: 3, lg: 6 }} spacing="md">
+    <SimpleGrid cols={{ base: 1, xs: 2, md: 3 }} spacing="md">
       <StatTile
         label="Mean absolute error"
+        icon={<IconRuler2 size={18} />}
         value={gw(published.mae_mw, 2)}
         tone={gain !== null && gain > 0 ? 'good' : 'neutral'}
         detail={
@@ -27,6 +36,7 @@ export function AccuracyKpis({ accuracy }: { accuracy: AccuracyResponse }) {
       />
       <StatTile
         label="Bias"
+        icon={<IconScale size={18} />}
         value={signedGw(published.bias_mw, 2)}
         tone="bad"
         detail={direction}
@@ -34,22 +44,27 @@ export function AccuracyKpis({ accuracy }: { accuracy: AccuracyResponse }) {
       />
       <StatTile
         label="Root mean square error"
+        icon={<IconChartBar size={18} />}
         value={gw(published.rmse_mw, 2)}
         detail="Penalises large misses more heavily"
       />
       <StatTile
         label="90% of hours within"
+        icon={<IconArrowsDiff size={18} />}
         value={`±${gw(published.abs_error_p90_mw)}`}
         detail={`Worst hour ${gw(published.max_abs_error_mw)}`}
         hint="90th percentile of the absolute hourly error."
       />
       <StatTile
         label="Normalised MAE"
+        icon={<IconPercentage size={18} />}
         value={pct(published.nmae_pct / 100, 1)}
         detail="Of mean wind output"
       />
       <StatTile
         label="Likely-range coverage"
+        icon={<IconTarget size={18} />}
+        accent="var(--gb-adjusted)"
         value={pct(accuracy.band_coverage, 1)}
         tone={
           accuracy.band_coverage != null &&

@@ -2,8 +2,10 @@ import {
   ActionIcon,
   Anchor,
   Badge,
+  Box,
   Card,
   Group,
+  SimpleGrid,
   Stack,
   Switch,
   Text,
@@ -18,6 +20,7 @@ import { briefCsvUrl, type BriefResponse, type MetaResponse } from '../../api/cl
 import { useBrief, useEvolution, useMeta } from '../../api/queries';
 import { ChartCard } from '../../components/ChartCard';
 import { QueryState } from '../../components/QueryState';
+import { RangeBar } from '../../components/RangeBar';
 import { RunTimeline } from '../../components/RunTimeline';
 import { useChartTokens } from '../../lib/chartTheme';
 import { addDays, calendarDate, ukTime } from '../../lib/format';
@@ -45,91 +48,123 @@ function DecisionControls({
   const min = meta.first_decision_date;
   const max = meta.last_decision_date;
   return (
-    <Group gap="md" wrap="wrap" align="flex-end">
-      <Group gap={6} align="flex-end" wrap="nowrap">
-        <Tooltip label="Previous day">
-          <ActionIcon
-            variant="default"
-            size="lg"
-            aria-label="Previous decision day"
-            disabled={decisionDate <= min}
-            onClick={() => onDate(addDays(decisionDate, -1))}
-          >
-            <IconChevronLeft size={18} />
-          </ActionIcon>
-        </Tooltip>
-        <DatePickerInput
-          label="Decision day (D-1)"
-          value={decisionDate}
-          onChange={(value) => {
-            if (value) onDate(value);
-          }}
-          minDate={min}
-          maxDate={max}
-          defaultDate={decisionDate}
-          valueFormat="ddd D MMM YYYY"
-          w={200}
-          allowDeselect={false}
+    <Card padding="md">
+      <Group gap="md" wrap="wrap" align="flex-end" justify="space-between">
+        <Group gap={6} align="flex-end" wrap="nowrap">
+          <Tooltip label="Previous day">
+            <ActionIcon
+              variant="default"
+              size="lg"
+              aria-label="Previous decision day"
+              disabled={decisionDate <= min}
+              onClick={() => onDate(addDays(decisionDate, -1))}
+            >
+              <IconChevronLeft size={18} />
+            </ActionIcon>
+          </Tooltip>
+          <DatePickerInput
+            label="Decision day (D-1)"
+            value={decisionDate}
+            onChange={(value) => {
+              if (value) onDate(value);
+            }}
+            minDate={min}
+            maxDate={max}
+            defaultDate={decisionDate}
+            valueFormat="ddd D MMM YYYY"
+            w={200}
+            allowDeselect={false}
+          />
+          <Tooltip label="Next day">
+            <ActionIcon
+              variant="default"
+              size="lg"
+              aria-label="Next decision day"
+              disabled={decisionDate >= max}
+              onClick={() => onDate(addDays(decisionDate, 1))}
+            >
+              <IconChevronRight size={18} />
+            </ActionIcon>
+          </Tooltip>
+        </Group>
+        <Switch
+          checked={reveal}
+          onChange={(event) => onReveal(event.currentTarget.checked)}
+          label="Reveal what actually happened"
+          description={
+            reveal
+              ? 'Showing the outturn, which was not known at the decision time'
+              : 'Showing only what the desk could see at the decision time'
+          }
+          size="md"
         />
-        <Tooltip label="Next day">
-          <ActionIcon
-            variant="default"
-            size="lg"
-            aria-label="Next decision day"
-            disabled={decisionDate >= max}
-            onClick={() => onDate(addDays(decisionDate, 1))}
-          >
-            <IconChevronRight size={18} />
-          </ActionIcon>
-        </Tooltip>
       </Group>
-      <Switch
-        checked={reveal}
-        onChange={(event) => onReveal(event.currentTarget.checked)}
-        label="Reveal what actually happened"
-        description={
-          reveal
-            ? 'Showing the outturn, which was not known at the decision time'
-            : 'Showing only what the desk could see at the decision time'
-        }
-        size="md"
-      />
-    </Group>
+    </Card>
   );
 }
 
-function DecisionSummary({ brief }: { brief: BriefResponse }) {
+function DecisionHero({ brief, reveal }: { brief: BriefResponse; reveal: boolean }) {
   const note = nextRunNote(brief);
+  const { energy } = brief;
+  const lead = energy.p50_gwh ?? energy.forecast_gwh;
   return (
-    <Card>
-      <Stack gap="xs">
-        <Group gap="xs" wrap="wrap">
-          <Title order={2} fz="h3">
-            Delivery {calendarDate(brief.delivery_date)}
-          </Title>
-          <Badge variant="light" color="gray" radius="sm" tt="none">
-            {brief.gate.label}
-          </Badge>
-        </Group>
-        <Text size="sm" c="var(--gb-ink-2)">
-          Hourly products {ukTime(brief.delivery_start)} on{' '}
-          {calendarDate(brief.decision_date, false)} to {ukTime(brief.delivery_end)} on{' '}
-          {calendarDate(brief.delivery_date, false)} (UK). Decision at {brief.gate.gate_closure_uk}{' '}
-          on {calendarDate(brief.decision_date, false)}.
-        </Text>
-        <Text size="lg" lh={1.5} c="var(--gb-ink)" maw={980} data-testid="brief-headline">
-          {briefHeadline(brief)}
-        </Text>
-        <RunTimeline
-          runs={brief.runs_on_decision_day}
-          cutoff={brief.cutoff}
-          decisionRun={brief.decision_run}
-          gateLabel={`Gate ${brief.gate.gate_closure_uk}`}
-        />
-        <Text size="xs" c="var(--gb-ink-2)">
-          Forecast runs published on the decision day: filled = available before gate closure, large
-          = used, hollow = too late.{note ? ` ${note}` : ''}
-        </Text>
+    <Card padding="xl">
+      <Stack gap="lg">
+        <Box>
+          <Text className="gb-eyebrow">Day-ahead brief</Text>
+          <Group gap="sm" wrap="wrap" mt={4}>
+            <Title order={1} fz={30}>
+              Delivery {calendarDate(brief.delivery_date)}
+            </Title>
+            <Badge variant="light" radius="sm" tt="none" size="lg">
+              {brief.gate.label}
+            </Badge>
+          </Group>
+          <Text size="sm" c="var(--gb-ink-2)" mt={4}>
+            Hourly products {ukTime(brief.delivery_start)} on{' '}
+            {calendarDate(brief.decision_date, false)} to {ukTime(brief.delivery_end)} on{' '}
+            {calendarDate(brief.delivery_date, false)}, UK time. Decision at{' '}
+            {brief.gate.gate_closure_uk} on {calendarDate(brief.decision_date, false)}.
+          </Text>
+        </Box>
+
+        <SimpleGrid cols={{ base: 1, md: 2 }} spacing={40}>
+          <Box>
+            <Text size="sm" fw={500} c="var(--gb-ink-2)">
+              {energy.p50_gwh != null
+                ? 'Expected wind energy, corrected for recent forecast error'
+                : 'Forecast wind energy for the delivery day'}
+            </Text>
+            <div className="gb-hero-value" style={{ marginTop: 6 }}>
+              {Math.round(lead).toLocaleString('en-GB')}
+              <span className="gb-hero-unit">GWh</span>
+            </div>
+            <Box mt="lg">
+              <RangeBar
+                forecast={energy.forecast_gwh}
+                p10={energy.p10_gwh}
+                p50={energy.p50_gwh}
+                p90={energy.p90_gwh}
+                actual={reveal ? energy.actual_gwh : null}
+              />
+            </Box>
+          </Box>
+          <Stack gap="sm">
+            <Text size="md" lh={1.6} c="var(--gb-ink)" data-testid="brief-headline">
+              {briefHeadline(brief)}
+            </Text>
+            <RunTimeline
+              runs={brief.runs_on_decision_day}
+              cutoff={brief.cutoff}
+              decisionRun={brief.decision_run}
+              gateLabel={`Gate ${brief.gate.gate_closure_uk}`}
+            />
+            <Text size="xs" c="var(--gb-ink-2)">
+              Runs published on the decision day: filled = available before gate closure, large =
+              used, hollow = too late.{note ? ` ${note}` : ''}
+            </Text>
+          </Stack>
+        </SimpleGrid>
       </Stack>
     </Card>
   );
@@ -174,7 +209,7 @@ export function BriefPage() {
       <QueryState query={brief}>
         {(data, refetching) => (
           <Stack gap="lg" className={refetching ? 'gb-refetching' : undefined}>
-            <DecisionSummary brief={data} />
+            <DecisionHero brief={data} reveal={reveal} />
             <BriefKpis brief={data} reveal={reveal} />
             <ChartCard
               title="Delivery day: hourly wind forecast"

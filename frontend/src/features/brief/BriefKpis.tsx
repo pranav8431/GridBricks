@@ -1,4 +1,11 @@
 import { SimpleGrid } from '@mantine/core';
+import {
+  IconAdjustmentsHorizontal,
+  IconBolt,
+  IconClockHour4,
+  IconTargetArrow,
+  IconWind,
+} from '@tabler/icons-react';
 
 import type { BriefResponse } from '../../api/client';
 import { StatTile } from '../../components/StatTile';
@@ -12,12 +19,15 @@ export function BriefKpis({ brief, reveal }: { brief: BriefResponse; reveal: boo
     <SimpleGrid cols={{ base: 1, xs: 2, md: reveal ? 5 : 4 }} spacing="md">
       <StatTile
         label="Published forecast"
+        icon={<IconWind size={18} />}
         value={gwh(energy.forecast_gwh)}
         detail={revisionNote(brief) ?? 'Energy over the 24 hourly products'}
         hint="Sum of the hourly forecast from the newest run published before the decision time."
       />
       <StatTile
-        label="Error-adjusted estimate"
+        label="Corrected estimate"
+        icon={<IconAdjustmentsHorizontal size={18} />}
+        accent="var(--gb-adjusted)"
         value={gwh(energy.p50_gwh)}
         detail={
           energy.p10_gwh != null && energy.p90_gwh != null
@@ -32,6 +42,7 @@ export function BriefKpis({ brief, reveal }: { brief: BriefResponse; reveal: boo
       />
       <StatTile
         label="Peak hour"
+        icon={<IconBolt size={18} />}
         value={gw(peak?.generation_mw)}
         detail={
           peak && trough
@@ -41,6 +52,7 @@ export function BriefKpis({ brief, reveal }: { brief: BriefResponse; reveal: boo
       />
       <StatTile
         label="Forecast run used"
+        icon={<IconClockHour4 size={18} />}
         value={brief.decision_run ? ukTime(brief.decision_run) : 'None'}
         detail={
           brief.decision_run_age_minutes != null
@@ -51,6 +63,8 @@ export function BriefKpis({ brief, reveal }: { brief: BriefResponse; reveal: boo
       {reveal ? (
         <StatTile
           label="Actual outturn"
+          icon={<IconTargetArrow size={18} />}
+          accent="var(--gb-actual)"
           value={gwh(energy.actual_gwh)}
           detail={
             energy.error_gwh != null

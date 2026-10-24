@@ -67,7 +67,7 @@ export function useChartTokens(): ChartTokens {
   return useComputedColorScheme('light') === 'dark' ? DARK : LIGHT;
 }
 
-export const FONT = 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif';
+export const FONT = '"Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
 
 export function baseOption(t: ChartTokens) {
   return {

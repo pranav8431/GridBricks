@@ -18,10 +18,10 @@ export const theme = createTheme({
   primaryColor: 'gbBlue',
   primaryShade: { light: 6, dark: 5 },
   colors: { gbBlue },
-  fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
+  fontFamily: '"Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
   headings: {
-    fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
-    fontWeight: '650',
+    fontFamily: '"Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+    fontWeight: '700',
   },
   defaultRadius: 'md',
   cursorType: 'pointer',
