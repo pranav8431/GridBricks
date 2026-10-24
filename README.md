@@ -248,8 +248,7 @@ See `.env.example`.
 
 ## Use of AI tools
 
-This project was built with substantial help from **Claude Code**, Anthropic's AI coding
-assistant. It was used for:
+This project was built with substantial help from an AI coding assistant. It was used for:
 
 - domain research, such as GB auction gate closures;
 - exploring the Elexon data;
